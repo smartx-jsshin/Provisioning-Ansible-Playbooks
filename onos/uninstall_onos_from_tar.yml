@@ -1,0 +1,39 @@
+---
+- hosts: onos_control
+  remote_user: ubuntu
+  become: yes
+  var:
+    onos_version: 1.11.1
+  tasks:
+    - name: Quit ONOS screen session
+      command: screen -S odl_control -X quit
+
+    - name: Uninstall JAVA packages
+      apt:
+        name: "{{item}}"
+        state: absent
+        update_cache: yes
+      with_itmes:
+        - oracle-java8-installer
+        - oracle-java8-set-default
+
+    - name: Delete an APT signing key for JAVA from Ubuntu server
+      apt_key:
+        id: EEA14886
+        url: 'hkp://keyserver.ubuntu.com:80'
+        state: absent
+
+    - name: Delete JAVA APT Repository
+      apt_repository:
+        repo: 'ppa:webupd8team/java'
+        state: absent
+
+    - name: Delete ONOS Tar
+      file:
+        path: /root/onos.tar.gz
+        state: absent
+
+    - name: Delete ONOS
+      file:
+        path: /opt/onos
+        state: absent
