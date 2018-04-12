@@ -1,0 +1,15 @@
+---
+  - name: Install RabbitMQ server
+    apt:
+      name: rabbitmq-server
+      state: present
+
+  - name: Add OpenStack User to RabbitMQ
+    - rabbitmq_user:
+        user: openstack
+        password: "{{ rabbit_pass }}"
+        vhost: /
+        configure_priv: .*
+        read_priv: .*
+        write_priv: .*
+        state: present

@@ -1,0 +1,21 @@
+---
+- name: Install NTP server Package
+  apt:
+    name: chrony
+    state: present
+    update_cache: yes
+
+- name: Replace NTP Configuration file
+  template:
+
+
+- name: Allow access from other boxes to local NTP Server
+  lineinfile:
+    path: /etc/chrony.conf
+    state: present
+    line: allow "{{ control_cip }}"
+
+- name: Restart NTP server
+  service:
+    name: chrony
+    state: restart

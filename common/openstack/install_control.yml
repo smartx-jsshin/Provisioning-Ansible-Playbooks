@@ -1,0 +1,8 @@
+---
+  - hosts: openstack_control
+    vars:
+      openstack_distro: queens
+      mysql_root_password: openstack
+      rabbit_pass: openstack
+    include_roles: basic_env
+    include_roles: keystone
