@@ -8,7 +8,7 @@
 We provide Vagrant File for supporting development and testing in local host.
 Before creating testing environment, you should ensure that required packages
 are installed. The required packages are listed below.
-- Ansible
+- Ansible (Latest Version)
 - Vagrant
 - VirtualBox
 - Python 2.7
