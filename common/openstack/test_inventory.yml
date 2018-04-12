@@ -1,0 +1,35 @@
+all:
+  children:
+    control:
+      hosts:
+        opestack-control1-1:
+          ansible_host: 192.168.100.111
+          ansible_user: vagrant
+          mgmt_ip: 192.168.100.111
+          mgmt_mask: 255.255.255.0
+          ctrl_ip: 192.168.101.111
+          ctrl_mask: 255.255.255.0
+          data_ip: 192.168.102.111
+          data_mask: 255.255.255.0
+
+    compute:
+      hosts:
+        openstack-compute1-1:
+          ansible_host: 192.168.100.112
+          ansible_user: vagrant
+          mgmt_ip: 192.168.100.112
+          mgmt_mask: 255.255.255.0
+          ctrl_ip: 192.168.101.112
+          ctrl_mask: 255.255.255.0
+          data_ip: 192.168.102.112
+          data_mask: 255.255.255.0
+
+        openstack-compute1-2:
+          ansible_host: 192.168.100.113
+          ansible_user: vagrant
+          mgmt_ip: 192.168.100.113
+          mgmt_mask: 255.255.255.0
+          ctrl_ip: 192.168.101.113
+          ctrl_mask: 255.255.255.0
+          data_ip: 192.168.102.113
+          data_mask: 255.255.255.0
