@@ -1,6 +1,7 @@
 ---
   - hosts: openstack_control
     vars:
+      target_playground: k-post
       openstack_distro: queens
       mysql_root_password: openstack
       rabbit_pass: openstack
