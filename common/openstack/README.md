@@ -1,4 +1,5 @@
 # OpenStack Playbook
+
 ## Target Playgrounds
 - Minimal OpenStack Configuration
   - One OpenStack control box & Multiple OpenStack Compute boxes
