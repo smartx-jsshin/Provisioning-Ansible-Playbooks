@@ -3,30 +3,33 @@
     apt:
       name: "{{ item }}"
       state: present
-      with_items:
-        - mariadb-server
-        - python-pymysql
+    with_items:
+      - mariadb-server
+      - python-pymysql
+      - python-mysqldb
 
-  - name: Copy DB Confgiuration file
+  - name: Templating DB Confgiuration file
     template:
       src: 99-openstack.cnf.j2
       dest: /etc/mysql/mariadb.conf.d/99-openstack.cnf
       owner: root
       group: root
       mode: 0600
+    register: mariadb_conf
 
   - name: Restart DB service
     service:
       name: mysql
-      state: restart
+      state: restarted
+    when: mariadb_conf is changed
 
   - name: Set root Password
     mysql_user:
-      login_password: {{ mysql_root_password }}
+      login_password: "{{ mysql_root_password }}"
       check_implicit_admin: yes
       name: root
-      host: {{ item }}
-      password: {{ mysql_root_password }}
+      host: "{{ item }}"
+      password: "{{ mysql_root_password }}"
       state: present
     with_items:
       - localhost

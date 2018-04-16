@@ -3,17 +3,22 @@
     apt:
       name: "{{ item }}"
       state: present
-      with_items:
-        - memcached
-        - python-memcached
+    with_items:
+      - memcached
+      - python-memcache
 
-  - name: Modify Memcached Conf File
-    lineinfile:
-      path: /etc/memcached.conf
-      regexp: '^-l 127\.0\.0\.1'
-      line: "-l {{ control_cip }}"
+  - name: Templating Memcached Configuration File
+    template:
+      src: memcached.conf.j2
+      dest: /etc/memcached.conf
+      mode: 0644
+      owner: root
+      group: root
+      backup: yes
+    register: memcached_conf
 
   - name: Restart Memcachd service
     service:
       name: memcached
-      state: restart
+      state: restarted
+    when: memcached_conf is defined

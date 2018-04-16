@@ -1,24 +1,24 @@
 ---
-  - name: Install Ubuntu Package "software-properties-common"
-    apt:
-      name: software-properties-common
-      state: present
+- name: Install Ubuntu Package "software-properties-common"
+  apt:
+    name: software-properties-common
+    state: present
 
-  - name: Install Ubuntu Cloud Keyring
-    apt:
-      pkg: ubuntu-cloud-keyring
-      state: present
+- name: Install Ubuntu Cloud Keyring
+  apt:
+    pkg: ubuntu-cloud-keyring
+    state: present
 
-  - name: Add OpenStack Repository
-    apt_repository:
-      repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/{{ openstack_distro }} main"
-      update_cache: yes
+- name: Add OpenStack Repository
+  apt_repository:
+    repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu xenial-updates/{{ openstack_distro }} main"
+    update_cache: yes
 
-  - name: Upgrade all packages
-    apt:
-      upgrade: dist
+- name: Upgrade all packages
+  apt:
+    upgrade: dist
 
-  - name: Install Python OpenStack Client:
-    apt:
-      name: python-openstackclient
-      state: present
+- name: Install Python OpenStack Client
+  apt:
+    name: python-openstackclient
+    state: present

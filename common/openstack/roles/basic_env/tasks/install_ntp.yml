@@ -5,17 +5,16 @@
     state: present
     update_cache: yes
 
-- name: Replace NTP Configuration file
+- name: Templating NTP Configuration file
   template:
-
-
-- name: Allow access from other boxes to local NTP Server
-  lineinfile:
-    path: /etc/chrony.conf
-    state: present
-    line: allow "{{ control_cip }}"
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
 
 - name: Restart NTP server
   service:
     name: chrony
-    state: restart
+    state: restarted
