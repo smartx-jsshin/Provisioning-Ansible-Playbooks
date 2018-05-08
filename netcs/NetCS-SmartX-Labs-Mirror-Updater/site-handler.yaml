@@ -1,0 +1,30 @@
+- name: "Site [{{ i }}]: Reading target domain from file \"{{ site }}\""
+  shell: ". {{ site }} && echo \"$TARGET_DOMAIN\" && echo \"$TARGET_CERTIFICATE_DOMAIN\" && echo \"$SERVER_RELOAD_COMMAND\""
+  register: file_echo
+
+- name: "Site [{{ i }}]: Target domain = {{ file_echo.stdout_lines[0] }}"
+  set_fact:
+    target_domain: "{{ file_echo.stdout_lines[0] }}"
+
+- name: "Site [{{ i }}]: Target certificate domain = {{ file_echo.stdout_lines[1] }}"
+  set_fact:
+    target_cert_domain: "{{ file_echo.stdout_lines[1] }}"
+
+- name: "Site [{{ i }}]: Target Reload Command = {{ file_echo.stdout_lines[2] }}"
+  set_fact:
+    target_reload_command: "{{ file_echo.stdout_lines[2] }}"
+
+- name: "Site [{{ i }}]: Resolving {{ target_domain }}"
+  shell: "dig +short {{ target_domain }}"
+  register: dig_short_query
+
+- name: "Site [{{ i }}]: Listing {{ target_domain }} A records = {{ dig_short_query.stdout_lines|join(', ') }}"
+  set_fact:
+    servers: "{{ dig_short_query.stdout_lines }}"
+
+- name: "Site [{{ i }}]: Syncing servers in given A records"
+  include: sync-server.yaml
+  with_items: "{{ servers }}"
+  loop_control:
+    loop_var: server
+    index_var: j

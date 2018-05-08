@@ -1,0 +1,29 @@
+all:
+  children:
+    smartx-labs-mirrors:
+      hosts:
+        localhost:
+      vars:
+        sites_search_path: "/home/mjkang/SmartX-Labs-Mirrors/sites"
+        webserver_root_content: "/home/mjkang/SmartX-Labs-Mirrors/webroot-contents"
+        target_webserver_root_path: "/var/www"
+        webserver_conf_template_path: "/home/mjkang/SmartX-Labs-Mirrors/web-conf"
+        target_webserver_conf_path: "/etc/nginx/sites-available"
+        webserver_app: "nginx"
+        shortcuts:
+          - name: "getUbuntu"
+            link: "/files/ubuntu-18.04-live-server-amd64.iso"
+          - name: "getJava"
+            link: "/files/jdk-8u172-linux-x64.tar.gz"
+          - name: "getJavaARM"
+            link: "/files/jdk-8u172-linux-arm32-vfp-hflt.tar.gz"
+          - name: "getHypriot"
+            link: "/files/hypriotos-rpi-v1.9.0.img.zip"
+          - name: "getHypriotConf"
+            link: "/files/hypriotos-init.yaml"
+          - name: "getUbuntuKafka"
+            link: "/files/ubuntu-kafka.img"
+          - name: "getRaspbianFlume"
+            link: "/files/raspbian-flume.img"
+          - name: "getKafkaToDB"
+            link: "/files/kafkatodb.img"

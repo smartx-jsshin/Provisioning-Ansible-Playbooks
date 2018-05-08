@@ -1,0 +1,23 @@
+---
+- hosts: smartx-labs-mirrors
+  vars:
+  become: yes
+  become_user: root
+  tasks:
+  - name: "Searching site files at {{ sites_search_path }}"
+    find:
+      paths: "{{ sites_search_path }}"
+      file_type: file
+      recurse: yes
+    register: sites_files
+    # TODO: Validate the site files
+  - name: "Listing detected sites"
+    set_fact:
+      sites: "{{ sites|default([]) + [item.path] }}"
+    with_items: "{{ sites_files.files }}"
+  - name: "Processing sites {{ sites|join(', ') }}"
+    include: site-handler.yaml
+    with_items: "{{ sites }}"
+    loop_control:
+      loop_var: site
+      index_var: i
