@@ -23,50 +23,49 @@
       state: restarted
     when: mariadb_conf is changed
 
-  - name: Set root Password
+  - name: ensure mysql is started and enabled
+    service:
+      name: mysql
+      state: restarted
+      enabled: yes
+
+  - name: update mysql root password for all root accounts
     mysql_user:
-      login_password: "{{ mysql_root_password }}"
-      check_implicit_admin: yes
+      name: root
+      host: localhost
+      password: "{{ mysql_root_password }}"
+
+  # Need to do this for idempotency, see
+  # http://ansible.cc/docs/modules.html#mysql-user
+  - name: copy .my.cnf file with root password credentials
+    template:
+      src: .my.cnf.j2
+      dest: /root/.my.cnf
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: update mysql root password for all root accounts
+    mysql_user:
       name: root
       host: "{{ item }}"
       password: "{{ mysql_root_password }}"
-      state: present
+      priv: "*.*:ALL,GRANT"
     with_items:
+      - "{{ ansible_hostname }}"
       - localhost
       - 127.0.0.1
       - ::1
 
-  - name: Reload privilege tables
-    command: 'mysql -ne "{{ item }}"'
+  - name: ensure anonymous users are not in the database
+    mysql_user:
+      name: ""
+      host: "{{ item }}"
+      state: absent
     with_items:
-      - FLUSH PRIVILEGES
-    changed_when: False
-
-  # Delete Anonymous User in MySQL
-  - name: Deletes anonymous MySQL server user for ansible_fqdn
-    mysql_user:
-      user: ""
-      host: "{{ ansible_fqdn }}"
-      state: "absent"
-
-  - name: Deletes anonymous MySQL server user for localhost
-    mysql_user:
-      user: ""
-      state: "absent"
-
-  # Disallow Remote Root Login
-  - name: Secures the MySQL root user for IPV6 localhost (::1)
-    mysql_user: user="root" password="{{ mysql_root_password }}" host="::1"
-
-  - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
-    mysql_user: user="root" password="{{ mysql_root_password }}" host="127.0.0.1"
-
-  - name: Secures the MySQL root user for localhost domain (localhost)
-    mysql_user: user="root" password="{{ mysql_root_password }}" host="localhost"
-
-  - name: Secures the MySQL root user for server_hostname domain
-    mysql_user: user="root" password="{{ mysql_root_password }}" host="{{ ansible_fqdn }}"
-
-  # Remove TEST database in MySQL
-  - name: Removes the MySQL test database
-    mysql_db: db=test state=absent
+      - "{{ ansible_hostname }}"
+      - "{{ inventory_hostname }}"
+      - localhost
+      - 127.0.0.1
+      - ::1
+      - "%"

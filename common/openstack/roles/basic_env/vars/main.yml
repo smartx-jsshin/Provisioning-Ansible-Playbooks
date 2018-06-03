@@ -1,2 +1,5 @@
 ---
 # vars file for basic_env
+chrony_ntp_servers:
+  - kr.pool.ntp.org
+  - time1.daum.net
