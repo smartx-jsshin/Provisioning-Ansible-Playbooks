@@ -1,0 +1,6 @@
+- name: "Site [{{ i }} = {{ target_domain }}]: Server [{{ j }} = {{ server }}]: Syncing"
+  shell: "rsync -arvKe \"ssh -o StrictHostKeyChecking=no\" {{ cert_path }}/{{ target_cert_domain }} root@{{ server }}:{{ cert_path }}"
+  delegate_to: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
+- name: "Site [{{ i }} = {{ target_domain }}]: Server [{{ j }} = {{ server }}]: Reloading"
+  shell: "ssh -o StrictHostKeyChecking=no root@{{ server }} {{ target_reload_command }}"

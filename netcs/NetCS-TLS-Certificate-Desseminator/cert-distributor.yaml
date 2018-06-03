@@ -1,0 +1,25 @@
+---
+- hosts: tls-cert-renewer
+  vars:
+    cert_path: "/etc/letsencrypt/archive"
+    sites_path: "/usr/local/letsencrypt-renewal/sites"
+  become: yes
+  become_user: root
+  tasks:
+  - name: "Searching site files at {{ sites_path }}"
+    find:
+      paths: "{{ sites_path }}"
+      file_type: file
+      recurse: yes
+    register: sites_files
+    # TODO: Validate the site files
+  - name: "Listing detected sites"
+    set_fact:
+      sites: "{{ sites|default([]) + [item.path] }}"
+    with_items: "{{ sites_files.files }}"
+  - name: "Processing sites {{ sites|join(', ') }}"
+    include: site-handler.yaml
+    with_items: "{{ sites }}"
+    loop_control:
+      loop_var: site
+      index_var: i
