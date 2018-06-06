@@ -16,7 +16,7 @@
 TEST_TITLE="openstack"
 
 CONTROL_NUMBERS=1
-CLIENT_NUMBERS=1
+CLIENT_NUMBERS=0
 
 CONTROL_CPU="2"
 CONTROL_RAM="2048"
@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
               control_ctrl_ipaddr="#{CTRL_IP_PREFIX}#{i}"
               control_data_ipaddr="#{DATA_IP_PREFIX}#{i}"
 
-              ctrl.vm.hostname = "#{TEST_TITLE}-control-#{i}"
+              ctrl.vm.hostname = "#{TEST_TITLE}-control#{i}"
               ctrl.vm.network "private_network", ip: control_mgmt_ipaddr
               ctrl.vm.network "private_network", ip: control_ctrl_ipaddr
               ctrl.vm.network "private_network", ip: control_data_ipaddr

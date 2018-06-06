@@ -1,0 +1,71 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+
+TEST_TITLE="openstack"
+
+CONTROL_NUMBERS=1
+CLIENT_NUMBERS=0
+
+CONTROL_CPU="2"
+CONTROL_RAM="2048"
+CLIENT_CPU="2"
+CLIENT_RAM="2048"
+
+MGMT_IP_PREFIX="192.168.100.10"
+CTRL_IP_PREFIX="192.168.101.10"
+DATA_IP_PREFIX="192.168.102.10"
+
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/xenial64"
+      (1..CONTROL_NUMBERS).each do |i|
+          config.vm.define "#{TEST_TITLE}-control#{i}" do |ctrl|
+              control_mgmt_ipaddr="#{MGMT_IP_PREFIX}#{i}"
+              control_ctrl_ipaddr="#{CTRL_IP_PREFIX}#{i}"
+              control_data_ipaddr="#{DATA_IP_PREFIX}#{i}"
+
+              ctrl.vm.hostname = "#{TEST_TITLE}-control#{i}"
+              ctrl.vm.network "private_network", ip: control_mgmt_ipaddr
+              ctrl.vm.network "private_network", ip: control_ctrl_ipaddr
+              ctrl.vm.network "private_network", ip: control_data_ipaddr
+
+              ctrl.vm.provider "virtualbox" do |v|
+                  v.name = "#{TEST_TITLE}-control#{i}"
+                  v.cpus = CONTROL_CPU
+                  v.memory = CONTROL_RAM
+              end
+          end
+      end
+
+      (1..CLIENT_NUMBERS).each do |j|
+          config.vm.define "#{TEST_TITLE}-client#{j}" do |cli|
+              client_ip_suffix = CONTROL_NUMBERS + j
+              client_mgmt_ipaddr = "#{MGMT_IP_PREFIX}#{client_ip_suffix}"
+              client_ctrl_ipaddr = "#{CTRL_IP_PREFIX}#{client_ip_suffix}"
+              client_data_ipaddr = "#{DATA_IP_PREFIX}#{client_ip_suffix}"
+
+              cli.vm.hostname = "#{TEST_TITLE}-client#{j}"
+              cli.vm.network "private_network", ip: client_mgmt_ipaddr
+              cli.vm.provider "virtualbox" do |v|
+                  v.name = "#{TEST_TITLE}-client#{j}"
+                  v.cpus = CLIENT_CPU
+                  v.memory = CLIENT_RAM
+              end
+          end
+      end
+    config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/me.pub"
+    config.vm.provision "shell", inline: "cat ~vagrant/.ssh/me.pub >> ~vagrant/.ssh/authorized_keys"
+    config.vm.provision "shell", inline: "cat ~vagrant/.ssh/me.pub >> ~vagrant/.ssh/authorized_keys"
+    config.vm.provision "shell", inline: "apt-get update && apt-get install -y python"
+end
