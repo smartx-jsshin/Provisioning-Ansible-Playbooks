@@ -1,0 +1,22 @@
+all:
+  children:
+    post:
+      hosts:
+        post1:
+          ansible_host: 192.168.100.101
+          ansible_user: vagrant
+          ansible_become: yes
+
+    datalake:
+      hosts:
+        post1:
+          ansible_host: 192.168.100.101
+          ansible_user: vagrant
+          ansible_become: yes
+
+    box:
+      hosts:
+        box1:
+          ansible_host: 192.168.100.102
+          ansible_user: vagrant
+          ansible_become: yes

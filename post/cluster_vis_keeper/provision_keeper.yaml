@@ -1,0 +1,8 @@
+---
+  - hosts: box
+    vars:
+      kernel_version:
+      iovisor_github:
+    roles:
+      - kernel
+      - iovisor

@@ -1,0 +1,6 @@
+---
+  hosts: post
+  vars:
+  tasks:
+    - include_roles:
+        name: grafana
