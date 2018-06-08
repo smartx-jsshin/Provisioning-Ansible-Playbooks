@@ -1,7 +1,0 @@
----
-  - hosts:
-    tasks:
-      - include_roles:
-          name: hdfs
-      #- include_roles:
-      #   name: opentsdb

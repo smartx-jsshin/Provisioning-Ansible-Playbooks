@@ -1,6 +1,12 @@
 ---
-  hosts: post
-  vars:
-  tasks:
-    - include_roles:
-        name: grafana
+- hosts: dashboard
+  vars_files:
+    - configurations.yaml
+  roles:
+    - influxdb
+
+- hosts: datalake-control
+  vars_files:
+    - configurations.yaml
+  roles:
+    - grafana

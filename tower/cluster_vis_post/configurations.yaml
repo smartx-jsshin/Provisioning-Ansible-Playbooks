@@ -1,5 +1,6 @@
 # Variables for InfluxDB Datalake
 influxdb_version: 1.5.3
+influxdb_admin_id: admin
 influxdb_admin_password: admin
 influxdb_user_id: test
 influxdb_user_password: test

@@ -29,9 +29,9 @@
 
 - name: Creating InfluxDB Admin Account
   influxdb_user:
-    user_name: admin
+    user_name: "{{ influxdb_admin_id }}"
     user_password: "{{ influxdb_admin_password }}"
-    login_username: admin
+    login_username: "{{ influxdb_admin_id }}"
     login_password: "{{ influxdb_admin_password }}"
     admin: yes
     state: present
@@ -40,8 +40,8 @@
   influxdb_user:
     user_name: "{{ influxdb_user_id }}"
     user_password: "{{ influxdb_user_password }}"
-    login_username: "{{ influxdb_user_id }}"
-    login_password: "{{ influxdb_user_password }}"
+    login_username: "{{ influxdb_admin_id }}"
+    login_password: "{{ influxdb_admin_password }}"
     admin: yes
     state: present
 
