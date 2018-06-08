@@ -54,11 +54,3 @@
     mode: 0644
     backup: yes
   notify: Restart InfluxDB Service
-
-- name: Creating InfluxDB Databases
-  influxdb_database:
-    database_name: "{{ item }}"
-    username: "{{ influxdb_user_id }}"
-    password: "{{ influxdb_user_password }}"
-    state: present
-  with_items: "{{ influxdb_databases }}"
