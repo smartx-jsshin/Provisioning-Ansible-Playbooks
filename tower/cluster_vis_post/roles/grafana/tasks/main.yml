@@ -1,2 +1,43 @@
 ---
 # tasks file for grafana
+- name: Install Required APT Packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - adduser
+    - libfontconfig
+
+- name: Downloading Grafana "{{ grafana_version }}" DEB file
+  get_url:
+    url: https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana_5.1.3_amd64.deb
+    dest: /tmp/grafana.deb
+
+- name: Installing Grafana "{{ grafana_version }}" DEB file
+  apt:
+    deb: /tmp/grafana.deb
+    state: present
+  notify:
+    - Systemd daemon-reload
+    - Starting Grafana service
+
+- name: Installing Grafana Plugins
+  grafana_plugin:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ grafana_plugins }}"
+  when: not((grafana_plugins is undefined) or (grafana_plugins is none))
+
+- name: Connecting Grafana Data Source
+  grafana_datasource:
+    name: "{{ item }}"
+    database: "{{ item }}"
+    ds_type: influxdb
+    url: "http://{{ datalake_ip }}:{{ datalake_port }}"
+    basic_auth_user: "{{ influxdb_user_id }}"
+    basic_auth_password: "{{ influxdb_user_password }}"
+    grafana_url: "http://{{ grafana_ip }}:{{ grafana_port }}"
+    grafana_user: "{{ grafana_user_id }}"
+    grafana_password: "{{ grafana_user_password }}"
+  with_items: "{{ influxdb_databases }}"

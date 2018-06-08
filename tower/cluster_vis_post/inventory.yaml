@@ -1,22 +1,33 @@
 all:
   children:
-    post:
+    dashboard:
       hosts:
-        post1:
-          ansible_host: 192.168.100.101
+        cluster-vis-control1:
+          ansible_host: 192.168.100.111
           ansible_user: vagrant
           ansible_become: yes
+          mgmt_ip: 192.168.100.111/24
+          ctrl_ip: 192.168.101.111/24
+          data_ip: 192.168.102.111/24
 
     datalake:
-      hosts:
-        post1:
-          ansible_host: 192.168.100.101
-          ansible_user: vagrant
-          ansible_become: yes
+      children:
+        datalake-control:
+          hosts:
+            cluster-vis-control1:
+              ansible_host: 192.168.100.111
+              ansible_user: vagrant
+              ansible_become: yes
+              mgmt_ip: 192.168.100.111/24
+              ctrl_ip: 192.168.101.111/24
+              data_ip: 192.168.102.111/24
 
-    box:
-      hosts:
-        box1:
-          ansible_host: 192.168.100.102
-          ansible_user: vagrant
-          ansible_become: yes
+        datalake-client:
+          hosts:
+            cluster-vis-client1:
+              ansible_host: 192.168.100.113
+              ansible_user: vagrant
+              ansible_become: yes
+              mgmt_ip: 192.168.100.113/24
+              ctrl_ip: 192.168.101.113/24
+              data_ip: 192.168.102.113/24

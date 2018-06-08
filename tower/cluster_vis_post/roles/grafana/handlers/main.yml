@@ -1,2 +1,12 @@
 ---
-# handlers file for grafana
+  # handlers file for grafana
+  - name: Systemd daemon-reload
+    systemd:
+      daemon_reload: yes
+    notify: Starting Grafana service
+
+  - name: Starting Grafana service
+    systemd:
+      name: grafana-server
+      state: started
+      enabled: yes
