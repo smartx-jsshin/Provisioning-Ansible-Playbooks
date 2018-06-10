@@ -25,9 +25,28 @@
 - name: Installing InfluxDB {{ influxdb_version }} from the DEB file
   apt:
     deb: /tmp/influxdb.deb
-  notify: Start InfluxDB Service
 
-- name: Creating InfluxDB Admin Account
+- name: Start InfluxDB Service
+  systemd:
+    name: influxd
+    state: started
+    enabled: yes
+
+- name: Get Request to InfluxDB for checking authentication enabled
+  uri:
+    url: "http://localhost:8086/query"
+    status_code: 400, 401
+  register: influx_auth_enabled
+
+- name: Creating InfluxDB Admin Account without Credential
+  influxdb_user:
+    user_name: "{{ influxdb_admin_id }}"
+    user_password: "{{ influxdb_admin_password }}"
+    admin: yes
+    state: present
+  when: influx_auth_enabled.status == 400
+
+- name: Creating InfluxDB Admin Account with Admin Credential
   influxdb_user:
     user_name: "{{ influxdb_admin_id }}"
     user_password: "{{ influxdb_admin_password }}"
@@ -35,6 +54,7 @@
     login_password: "{{ influxdb_admin_password }}"
     admin: yes
     state: present
+  when: influx_auth_enabled.status == 401
 
 - name: Creating InfluxDB User Account
   influxdb_user:
@@ -54,3 +74,4 @@
     mode: 0644
     backup: yes
   notify: Restart InfluxDB Service
+- meta: flush_handlers

@@ -1,5 +1,5 @@
 ---
-- hosts: dashboard
+- hosts: datalake-control
   vars_files:
     - configurations.yaml
   roles:
@@ -13,7 +13,7 @@
         state: present
       with_items: "{{ influxdb_databases }}"
 
-- hosts: datalake-control
+- hosts: dashboard
   vars_files:
     - configurations.yaml
   roles:

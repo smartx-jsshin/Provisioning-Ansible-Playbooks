@@ -3,7 +3,7 @@ all:
     dashboard:
       hosts:
         cluster-vis-control1:
-          ansible_host: 192.168.100.111
+          ansible_host: 192.168.101.111
           ansible_user: vagrant
           ansible_become: yes
           mgmt_ip: 192.168.100.111/24
@@ -14,13 +14,13 @@ all:
       children:
         datalake-control:
           hosts:
-            cluster-vis-control1:
-              ansible_host: 192.168.100.111
+            cluster-vis-control2:
+              ansible_host: 192.168.101.112
               ansible_user: vagrant
               ansible_become: yes
-              mgmt_ip: 192.168.100.111/24
-              ctrl_ip: 192.168.101.111/24
-              data_ip: 192.168.102.111/24
+              mgmt_ip: 192.168.100.112/24
+              ctrl_ip: 192.168.101.112/24
+              data_ip: 192.168.102.112/24
 
         datalake-client:
           hosts:

@@ -18,9 +18,13 @@
   apt:
     deb: /tmp/grafana.deb
     state: present
-  notify:
-    - Systemd daemon-reload
-    - Starting Grafana service
+
+- name: Starting Grafana service
+  systemd:
+    name: grafana-server
+    state: started
+    daemon_reload: yes
+    enabled: yes
 
 - name: Installing Grafana Plugins
   grafana_plugin:
@@ -28,4 +32,3 @@
     state: present
   with_items: "{{ grafana_plugins }}"
   when: not((grafana_plugins is undefined) or (grafana_plugins is none))
-  
