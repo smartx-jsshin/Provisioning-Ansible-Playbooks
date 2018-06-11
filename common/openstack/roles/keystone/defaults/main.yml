@@ -1,2 +1,4 @@
 ---
 # defaults file for keystone
+  mysql_root_password: openstack
+  keystone_db_pass: openstack

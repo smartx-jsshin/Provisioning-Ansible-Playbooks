@@ -1,8 +1,5 @@
 ---
 # tasks file for keystone
-- tasks:
-    - include_tasks: install_ntp.yml # Need to Implement
-    - include_tasks: add_openstack_repo.yml
-    - include_tasks: install_db.yml
-    - include_tasks: install_message_queue.yml
-    - include_tasks: install_memcached.yml
+- include_tasks: create_db.yml
+- include_tasks: install_keystone.yml
+- include_tasks: configure_default_user.yml

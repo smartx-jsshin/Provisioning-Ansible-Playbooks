@@ -1,0 +1,50 @@
+---
+- name: Install Keystone Packages in Ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - keystone
+    - apache2
+    - libapache2-mod-wsgi
+
+- name: Template keystone.conf
+  template:
+    src: keystone.conf.j2
+    dest: /etc/keystone/keystone.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+
+- name: Populate Keystone Database
+  become_user: keystone
+  command: keystone-manage db_sync
+
+- name: Initialize Fernet Setup
+  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+
+- name: Initialize Credential Setup
+  command: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+
+- name: Bootstrap Keystone
+  command: |
+    keystone-manage bootstrap --bootstrap-password "{{ admin_pass }}"\
+    --bootstrap-admin-url http://"{{ ctrl_ip_womask }}":"{{ keystone_admin_url_port }}"/v3/
+    --bootstrap-internal-url http://"{{ ctrl_ip_womask }}":"{{ keystone_internal_url_port }}"/v3/
+    --bootstrap-public-url http://"{{ ctrl_ip_womask }}":"{{ keystone_public_url_port }}"/v3/
+    --bootstrap-region-id "{{ openstack_region }}"
+
+- name: Template apache2.conf
+  template:
+    src: apache2.conf.j2
+    dest: /etc/apache2/apache2.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+
+- name: Restart Apache2 Service
+  service:
+    name: apache2
+    state: restarted
