@@ -51,8 +51,13 @@
     owner: root
     group: root
     backup: yes
-  notify: Restart Apache2 Service
-- meta: flush_handlers
+# notify: Restart Apache2 Service
+#- meta: flush_handlers
+
+- name: Reload Apache
+  service:
+    name: apache2
+    state: reloaded
 
 - name: Templating admin-openrc.sh for CLI
   template:

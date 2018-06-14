@@ -8,7 +8,8 @@
       state: present
       login_unix_socket: /var/run/mysqld/mysqld.sock
 
-  - name: Grant access to the DB for the service
+  - name: Grant access to the DB for the service for keystone@0.0.0.0
+#   shell: "mysql -u root -e \"grant all privileges on keystone.* to 'keystone'@'%' identified by '{{ keystone_db_pass }}'\""
     mysql_user:
       login_host: 127.0.0.1
       login_user: root
@@ -21,3 +22,9 @@
     with_items:
       - localhost
       - "%"
+
+# - name: Grant access to the DB for the service for keystone@localhost
+#   shell: "mysql -u root -e \"grant all privileges on keystone.* to 'keystone'@'localhost' identified by '{{ keystone_db_pass }}'\""
+
+# - name: Grant access to the DB for the service for keystone@127.0.0.1
+#   shell: "mysql -u root -e \"grant all privileges on keystone.* to 'keystone'@'127.0.0.1' identified by '{{ keystone_db_pass }}'\""

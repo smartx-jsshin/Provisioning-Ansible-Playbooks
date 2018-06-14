@@ -12,7 +12,8 @@ keystone_db_pass: openstack
 demo_pass: openstack
 
 ## For Keystone
-keystone_admin_url_port: 35357
+# keystone_admin_url_port: 35357
+keystone_admin_url_port: 5000
 keystone_internal_url_port: 5000
 keystone_public_url_port: 5000
 openstack_region: RegionOne
