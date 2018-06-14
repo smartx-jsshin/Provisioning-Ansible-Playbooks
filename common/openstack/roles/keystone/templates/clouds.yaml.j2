@@ -1,0 +1,11 @@
+clouds:
+  {{ playground_name }}:
+    auth:
+      auth_url: http://{{ ctrl_ip_womask }}:{{ keystone_admin_url_port }}/v3
+      project_name: admin
+      username: admin
+      password: {{ admin_pass }}
+      project_name: admin
+      user_domain_name: default
+      project_domain_name: default
+    region_name: {{ openstack_region }}

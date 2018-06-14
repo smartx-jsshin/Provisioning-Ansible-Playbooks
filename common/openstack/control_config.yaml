@@ -1,0 +1,24 @@
+## For common
+playground_name: k-one
+openstack_distro: queens
+ctrl_ip_womask: "{{ ctrl_ip|ipaddr_womask_filter }}"
+# etcd_version: v3.2.7
+
+## Passwords
+admin_pass: openstack
+rabbit_pass: openstack
+mysql_root_password: openstack
+keystone_db_pass: openstack
+demo_pass: openstack
+
+## For Keystone
+keystone_admin_url_port: 35357
+keystone_internal_url_port: 5000
+keystone_public_url_port: 5000
+openstack_region: RegionOne
+
+## For Glance
+## For Cinder
+## For Nova
+## For Neutron
+## For Horizon

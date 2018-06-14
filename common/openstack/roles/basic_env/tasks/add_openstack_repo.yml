@@ -22,3 +22,8 @@
   apt:
     name: python-openstackclient
     state: present
+
+- name: Install Python-pip
+  apt:
+    name: python-pip
+    state: present

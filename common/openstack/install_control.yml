@@ -1,15 +1,7 @@
 ---
-  - hosts: openstack_control
-    vars:
-      target_playground: k-post
-      openstack_distro: queens
-      mysql_root_password: openstack
-      rabbit_pass: openstack
-      keystone_db_pass: openstack
-      ctrl_ip_womask: "{{ ctrl_ip|ipaddr_womask_filter }}"
-      admin_pass: openstack
-    tasks:
-      - include_role:
-          name: basic_env
-      - include_role:
-          name: keystone
+  - hosts: openstack-control
+    vars_files:
+      - control_config.yaml
+    roles:
+      - basic_env
+      - keystone

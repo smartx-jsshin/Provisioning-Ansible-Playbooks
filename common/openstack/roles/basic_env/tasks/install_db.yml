@@ -15,19 +15,8 @@
       owner: root
       group: root
       mode: 0600
-    register: mariadb_conf
-
-  - name: Restart DB service
-    service:
-      name: mysql
-      state: restarted
-    when: mariadb_conf is changed
-
-  - name: ensure mysql is started and enabled
-    service:
-      name: mysql
-      state: restarted
-      enabled: yes
+    notify: Restart MySQL service
+  - meta: flush_handlers
 
   - name: update mysql root password for all root accounts
     mysql_user:
@@ -69,3 +58,8 @@
       - 127.0.0.1
       - ::1
       - "%"
+
+  - name: Removes the MySQL test database
+    mysql_db:
+      name: test
+      state: absent

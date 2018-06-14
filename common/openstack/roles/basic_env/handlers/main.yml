@@ -1,0 +1,18 @@
+---
+  - name: Restart Chrony service
+    service:
+      name: chrony
+      state: restarted
+      enabled: yes
+
+  - name: Restart MySQL service
+    service:
+      name: mysql
+      state: restarted
+      enabled: yes
+
+  - name: Restart Memcached service
+    service:
+      name: memcached
+      state: restarted
+      enabled: yes

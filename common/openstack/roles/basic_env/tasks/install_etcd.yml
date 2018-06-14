@@ -1,0 +1,79 @@
+---
+- name: Creating Etcd group
+  group:
+    name: etcd
+    system: yes
+    state: present
+
+- name: Creating Etcd user
+  user:
+    name: etcd
+    group: etcd
+    shell: /bin/false
+    system: yes
+    home: /var/lib/etcd
+    state: present
+
+- name: Creating required Etcd directories
+  file:
+    path: "{{ item }}"
+    owner: etcd
+    group: etcd
+    mode: 0644
+    state: directory
+  with_items:
+    - /etc/etcd
+    - /var/lib/etcd
+
+- name: Download Etcd tarball
+  get_url:
+    url: "https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    mode: 0644
+
+- name: Ensure Etcd diretory exists in tmp
+  file:
+    path: /tmp/etcd
+    state: directory
+
+- name: Extract Etcd tarball
+  unarchive:
+    src: "/tmp/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /tmp/etcd
+    remote_src: yes
+    extra_opts: "--strip-components=1"
+
+- name: Copy Etcd executables
+  copy:
+    src: "/tmp/etcd/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    owner: etcd
+    group: etcd
+    remote_src: yes
+    mode: 0755
+  with_items:
+    - etcd
+    - etcdctl
+
+- name: Templating Etcd Configuration File
+  template:
+    src: etcd.conf.yml.j2
+    dest: /etc/etcd/etcd.conf.yml
+    mode: 0644
+    owner: etcd
+    group: etcd
+    backup: yes
+
+- name: Templating Etcd Service File
+  template:
+    src: etcd.service.j2
+    dest: /lib/systemd/system/etcd.service
+    mode: 0644
+    owner: etcd
+    group: etcd
+
+- name: Starting Etcd Service
+  systemd:
+    name: etcd
+    state: started
+    enabled: yes

@@ -7,11 +7,6 @@
       name: keystone
       state: present
       login_unix_socket: /var/run/mysqld/mysqld.sock
-    register: keystone_db
-
-  - name: show mysql Password
-    debug:
-      msg: "{{ mysql_root_password }}"
 
   - name: Grant access to the DB for the service
     mysql_user:

@@ -13,8 +13,5 @@
     group: root
     mode: 0644
     backup: yes
-
-- name: Restart NTP server
-  service:
-    name: chrony
-    state: restarted
+  notify: Restart Chrony service
+- meta: flush_handlers
