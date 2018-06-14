@@ -1,7 +1,9 @@
 ## For common
 playground_name: k-one
 openstack_distro: queens
+mgmt_ip_womask: "{{ mgmt_ip|ipaddr_womask_filter }}"
 ctrl_ip_womask: "{{ ctrl_ip|ipaddr_womask_filter }}"
+data_ip_womask: "{{ data_ip|ipaddr_womask_filter }}"
 # etcd_version: v3.2.7
 
 ## Passwords
@@ -19,6 +21,11 @@ keystone_public_url_port: 5000
 openstack_region: RegionOne
 
 ## For Glance
+glance_pass: openstack
+glance_db_pass: openstack
+glance_admin_url_port: 9292
+glance_internal_url_port: 9292
+glance_public_url_port: 9292
 ## For Cinder
 ## For Nova
 ## For Neutron

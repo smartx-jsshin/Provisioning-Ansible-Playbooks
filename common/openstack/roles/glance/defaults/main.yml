@@ -1,2 +1,4 @@
 ---
 # defaults file for glance
+  mysql_root_password: openstack
+  glance_db_pass: openstack

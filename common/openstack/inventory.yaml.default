@@ -2,19 +2,19 @@ all:
   children:
     openstack-control:
       hosts:
-        openstack-control1:
-          ansible_host: 210.125.84.165
-          ansible_user: ubuntu
+        opestack-control1:
+          ansible_host: 192.168.100.101
+          ansible_user: vagrant
           ansible_become: yes
-          mgmt_ip: 10.10.10.7/24
-          ctrl_ip: 192.168.101.18/24
-          data_ip: 192.168.102.19/24
+          mgmt_ip: 192.168.100.101/24
+          ctrl_ip: 192.168.101.101/24
+          data_ip: 192.168.102.101/24
 
     openstack-compute:
       hosts:
         openstack-compute1:
-          ansible_host: 210.125.84.166
-          ansible_user: ubuntu
+          ansible_host: 192.168.100.102
+          ansible_user: vagrant
           ansible_become: yes
           mgmt_ip: 192.168.100.102/24
           ctrl_ip: 192.168.101.102/24

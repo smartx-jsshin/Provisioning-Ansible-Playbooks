@@ -1,15 +1,39 @@
 ---
+- name: Get Service Project
+  shell: ". /root/admin-openrc.sh && openstack project show service -f json"
+  register: get_svc_project
+  ignore_errors: True
+
 - name: Create Service Project
   shell: ". /root/admin-openrc.sh && openstack project create --domain \"Default\" --description \"Service Project\" -f json service"
+  when: get_svc_project is failed
+
+- name: Get Demo Project
+  shell: ". /root/admin-openrc.sh && openstack project show demo -f json"
+  register: get_demo_project
+  ignore_errors: True
 
 - name: Create Demo Project
-  shell: ". /root/admin-openrc.sh && openstack project create --domain \"Default\" --description \"Demo Project\" -f json demo"
+  shell: ". /root/admin-openrc.sh && openstack project show demo || openstack project create --domain \"Default\" --description \"Demo Project\" -f json demo"
+  when: get_demo_project is failed
+
+- name: Get Demo User
+  shell: ". /root/admin-openrc.sh && openstack user show demo -f json"
+  register: get_demo_user
+  ignore_errors: True
 
 - name: Create Demo User
   shell: ". /root/admin-openrc.sh && openstack user create --domain \"Default\" --password \"{{ demo_pass }}\" -f json demo"
+  when: get_demo_user is failed
+
+- name: Get User Role
+  shell: ". /root/admin-openrc.sh && openstack role show user -f json"
+  register: get_user_role
+  ignore_errors: True
 
 - name: Create User Role
   shell: ". /root/admin-openrc.sh && openstack role create -f json user"
+  when: get_user_role is failed
 
-- name: Create User Role and Associate it to Demo
+- name: Associate User demo to User Role
   shell: ". /root/admin-openrc.sh && openstack role add --project demo --user demo user"

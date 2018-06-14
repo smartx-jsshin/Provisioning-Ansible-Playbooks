@@ -1,0 +1,58 @@
+---
+- name: Install Glance Packages in Ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - glance
+
+- name: Template glance-api.conf
+  template:
+    src: glance-api.conf.j2
+    dest: /etc/glance/glance-api.conf
+    mode: 0644
+    owner: root
+    group: glance
+    backup: yes
+
+- name: Template glance-registry.conf
+  template:
+    src: glance-registry.conf.j2
+    dest: /etc/glance/glance-registry.conf
+    mode: 0644
+    owner: root
+    group: glance
+    backup: yes
+
+- name: Populate Glance Database
+  become_user: glance
+  command: glance-manage db_sync
+
+- name: Reload glance-registry
+  service:
+    name: glance-registry
+    state: restarted
+
+- name: Reload glance-api
+  service:
+    name: glance-api
+    state: restarted
+
+- name: Get Cirros Image
+  shell: ". /root/admin-openrc.sh && openstack image show cirros -f json"
+  register: get_cirros_image
+  ignore_errors: True
+
+- name: Download Cirros Image
+  get_url:
+    url: http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+    dest: /tmp/cirros-0.4.0-x86_64-disk.img
+  register: downloaded_cirros
+  when: get_cirros_image is failed
+
+- name: Create Image Object
+  shell: ". /root/admin-openrc.sh && openstack image create \"cirros\" -f json --file {{ downloaded_cirros.dest }} --disk-format qcow2 --container-format bare --public"
+  when: get_cirros_image is failed
+
+- name: Verify Image Object
+  shell: ". /root/admin-openrc.sh && openstack image show cirros -f json"
