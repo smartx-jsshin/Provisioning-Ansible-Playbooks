@@ -28,5 +28,14 @@ glance_internal_url_port: 9292
 glance_public_url_port: 9292
 ## For Cinder
 ## For Nova
+nova_pass: openstack
+nova_db_pass: openstack
+nova_admin_url_port: 8744
+nova_internal_url_port: 8774
+nova_public_url_port: 8774
+placement_pass: openstack
+placement_admin_url_port: 8778
+placement_internal_url_port: 8778
+placement_public_url_port: 8778
 ## For Neutron
 ## For Horizon

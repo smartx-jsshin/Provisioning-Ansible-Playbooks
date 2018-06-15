@@ -1,0 +1,52 @@
+---
+- name: Install Nova Packages in Ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nova-api
+    - nova-conductor
+    - nova-consoleauth
+    - nova-novncproxy
+    - nova-scheduler
+    - nova-placement-api
+
+- name: Template nova.conf
+  template:
+    src: nova.conf.j2
+    dest: /etc/nova/nova.conf
+    mode: 0644
+    owner: root
+    group: nova
+    backup: yes
+
+- name: Populate nova-api Database
+  become_user: nova
+  command: nova-manage api_db sync
+
+- name: Register cell0 Database
+  become_user: nova
+  command: nova-manage cell_v2 map_cell0
+
+- name: Create cell1 Cell
+  become_user: nova
+  command: nova-manage cell_v2 create_cell --name=cell1 --verbose
+
+- name: Populate nova Database
+  become_user: nova
+  command: nova-manage db sync
+
+- name: Verify registered cells
+  become_user: nova
+  command: nova-manage cell_v2 list_cells
+
+- name: Reload services
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - nova-api
+  - nova-consoleauth
+  - nova-scheduler
+  - nova-conductor
+  - nova-novncproxy
