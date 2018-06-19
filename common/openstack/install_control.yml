@@ -1,9 +1,9 @@
 ---
-  - hosts: openstack-control
+  - hosts: openstack_control
     vars_files:
       - control_config.yaml
     roles:
-#     - basic_env
-#     - keystone
-#     - glance
+      - basic_env
+      - keystone
+      - glance
       - nova

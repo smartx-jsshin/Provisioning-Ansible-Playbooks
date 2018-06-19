@@ -1,5 +1,5 @@
 [DEFAULT]
-#
+# log_dir = /var/log/nova
 lock_path = /var/lock/nova
 state_path = /var/lib/nova
 
@@ -3156,7 +3156,7 @@ firewall_driver = nova.virt.firewall.NoopFirewallDriver
 # oslo_messaging.TransportURL at
 # https://docs.openstack.org/oslo.messaging/latest/reference/transport.html
 # (string value)
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
+transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ controller.ctrl_ip_womask }}
 
 # DEPRECATED: The messaging driver to use, defaults to rabbit. Other drivers
 # include amqp and zmq. (string value)
@@ -3221,7 +3221,7 @@ transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
 # Possible values:
 # keystone - <No description provided>
 # noauth2 - <No description provided>
-auth_strategy=keystone
+auth_strategy = keystone
 
 #
 # When True, the 'X-Forwarded-For' header is treated as the canonical remote
@@ -3502,7 +3502,7 @@ auth_strategy=keystone
 
 
 [api_database]
-connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_ip_womask }}/nova_api
+connection = sqlite:////var/lib/nova/nova_api.sqlite
 #
 # The *Nova API Database* is a separate database which is used for information
 # which is used across *cells*. This database is mandatory since the Mitaka
@@ -4558,7 +4558,7 @@ enable = False
 
 
 [database]
-connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_ip_womask }}/nova
+connection = sqlite:////var/lib/nova/nova.sqlite
 
 #
 # From oslo.db
@@ -5205,7 +5205,7 @@ connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_ip_womask }}/nova
 # "scheme://hostname:port[/path]"
 #   (i.e. "http://10.0.1.0:9292" or "https://my.glance.server/image").
 #  (list value)
-api_servers = http://{{ ctrl_ip_womask }}:{{ glance_internal_url_port }}
+api_servers = http://{{ controller.ctrl_ip_womask  }}:{{ glance_internal_url_port }}
 
 #
 # Enable glance operation retries.
@@ -6012,15 +6012,7 @@ api_servers = http://{{ ctrl_ip_womask }}:{{ glance_internal_url_port }}
 # Its value may be silently ignored in the future.
 # Reason: The auth_uri option is deprecated in favor of www_authenticate_uri and
 # will be removed in the S  release.
-auth_uri = http://{{ ctrl_ip_womask }}:{{ keystone_public_url_port }}
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}
-memcached_servers = {{ ctrl_ip_womask }}:11211
-auth_type = password
-project_domain_name = default
-user_domain_name = default
-project_name = service
-username = nova
-password = {{ nova_pass }}
+# auth_uri = http://172.25.0.55:5000
 
 # API version of the admin Identity API endpoint. (string value)
 #auth_version = <None>
@@ -6070,7 +6062,7 @@ password = {{ nova_pass }}
 # Optionally specify a list of memcached server(s) to use for caching. If left
 # undefined, tokens will instead be cached in-process. (list value)
 # Deprecated group/name - [keystone_authtoken]/memcache_servers
-#memcached_servers = <None>
+memcached_servers = {{ controller.ctrl_ip_womask }}:11211
 
 # In order to prevent excessive effort spent validating tokens, the middleware
 # caches previously-seen tokens for a configurable duration (in seconds). Set to
@@ -6216,10 +6208,16 @@ password = {{ nova_pass }}
 
 # Authentication type to load (string value)
 # Deprecated group/name - [keystone_authtoken]/auth_plugin
-#auth_type = <None>
+auth_type = password
 
 # Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
+auth_url = http://{{ controller.ctrl_ip_womask }}:{{ keystone_internal_url_port }}
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = nova
+password = {{ nova_pass }}
 
 
 [libvirt]
@@ -8040,7 +8038,7 @@ lock_path = /var/lib/nova/tmp
 # A URL representing the messaging driver to use for notifications. If not set,
 # we fall back to the same configuration used for RPC. (string value)
 # Deprecated group/name - [DEFAULT]/notification_transport_url
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
+#transport_url = <None>
 
 # AMQP topic used for OpenStack notifications. (list value)
 # Deprecated group/name - [rpc_notifier2]/topics
@@ -8645,14 +8643,6 @@ transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
 
 
 [placement]
-os_region_name = RegionOne
-project_domain_name = Default
-project_name = service
-auth_type = password
-user_domain_name = Default
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}/v3
-username = placement
-password = {{ placement_pass }}
 
 #
 # From nova.conf
@@ -8670,7 +8660,7 @@ password = {{ placement_pass }}
 # Its value may be silently ignored in the future.
 # Reason: Endpoint lookup uses the service catalog via common keystoneauth1
 # Adapter configuration options.  Use the region_name option instead.
-#os_region_name = <None>
+os_region_name = RegionOne
 
 # DEPRECATED:
 # Endpoint interface for this node. This is used when picking the URL in the
@@ -8710,13 +8700,13 @@ password = {{ placement_pass }}
 
 # Authentication type to load (string value)
 # Deprecated group/name - [placement]/auth_plugin
-#auth_type = <None>
+auth_type = password
 
 # Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
 
 # Authentication URL (string value)
-#auth_url = <None>
+auth_url = http://{{ controller.ctrl_ip_womask }}:{{ keystone_internal_url_port }}/v3
 
 # Scope for system operations (string value)
 #system_scope = <None>
@@ -8731,13 +8721,13 @@ password = {{ placement_pass }}
 #project_id = <None>
 
 # Project name to scope to (string value)
-#project_name = <None>
+project_name = service
 
 # Domain ID containing project (string value)
 #project_domain_id = <None>
 
 # Domain name containing project (string value)
-#project_domain_name = <None>
+project_domain_name = Default
 
 # Trust ID (string value)
 #trust_id = <None>
@@ -8757,16 +8747,16 @@ password = {{ placement_pass }}
 
 # Username (string value)
 # Deprecated group/name - [placement]/user_name
-#username = <None>
+username = placement
 
 # User's domain id (string value)
 #user_domain_id = <None>
 
 # User's domain name (string value)
-#user_domain_name = <None>
+user_domain_name = Default
 
 # User's password (string value)
-#password = <None>
+password = {{ placement_pass }}
 
 # Tenant ID (string value)
 #tenant_id = <None>
@@ -9615,7 +9605,7 @@ password = {{ placement_pass }}
 #
 # * IP address to listen on.
 #  (string value)
-server_listen = 172.25.0.55
+#server_listen = 127.0.0.1
 
 #
 # The address used by ``nova-spicehtml5proxy`` client to connect to instance
@@ -9635,7 +9625,7 @@ server_listen = 172.25.0.55
 #   The proxy client must be able to access the address specified in
 #   ``server_listen`` using the value of this option.
 #  (string value)
-server_proxyclient_address = 172.25.0.55
+#server_proxyclient_address = 127.0.0.1
 
 #
 # A keyboard layout which is supported by the underlying hypervisor on this
@@ -10143,7 +10133,7 @@ server_proxyclient_address = 172.25.0.55
 # (for example Horizon) can then establish a VNC connection to the guest.
 #  (boolean value)
 # Deprecated group/name - [DEFAULT]/vnc_enabled
-enabled = true
+enabled = True
 
 #
 # Keymap for VNC.
@@ -10167,7 +10157,7 @@ enabled = true
 #  (unknown value)
 # Deprecated group/name - [DEFAULT]/vncserver_listen
 # Deprecated group/name - [vnc]/vncserver_listen
-server_listen = $my_ip
+server_listen = 0.0.0.0
 
 #
 # Private, internal IP address or hostname of VNC console proxy.
@@ -10198,7 +10188,7 @@ server_proxyclient_address = $my_ip
 # * novncproxy_host
 # * novncproxy_port
 #  (uri value)
-#novncproxy_base_url = http://127.0.0.1:6080/vnc_auto.html
+novncproxy_base_url = http://{{ controller.mgmt_ip_womask }}:6080/vnc_auto.html
 
 #
 # IP address or hostname that the XVP VNC console proxy should bind to.

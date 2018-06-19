@@ -1,0 +1,6 @@
+---
+# tasks file for nova
+# - include_tasks: test.yml
+# - include_tasks: create_db.yml
+# - include_tasks: configure_default_auth.yml
+- include_tasks: install_nova.yml

@@ -1,0 +1,7 @@
+---
+  - hosts: openstack_compute
+    vars_files:
+      - control_config.yaml
+    roles:
+#     - basic_env
+      - nova_compute

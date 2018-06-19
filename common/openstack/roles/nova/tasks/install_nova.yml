@@ -30,7 +30,13 @@
 
 - name: Create cell1 Cell
   become_user: nova
+  shell: "nova-manage cell_v2 list_cells --verbose | grep \" cell1 \" | wc -l"
+  register: nova_cell1_exists
+
+- name: Check if cell1 exists
+  become_user: nova
   command: nova-manage cell_v2 create_cell --name=cell1 --verbose
+  when: "nova_cell1_exists.stdout | int == 0"
 
 - name: Populate nova Database
   become_user: nova

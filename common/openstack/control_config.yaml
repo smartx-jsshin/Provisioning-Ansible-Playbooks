@@ -1,9 +1,12 @@
 ## For common
 playground_name: k-one
 openstack_distro: queens
+# These variables are for "current" target host.
 mgmt_ip_womask: "{{ mgmt_ip|ipaddr_womask_filter }}"
 ctrl_ip_womask: "{{ ctrl_ip|ipaddr_womask_filter }}"
 data_ip_womask: "{{ data_ip|ipaddr_womask_filter }}"
+# These variables are for "control" target host.
+
 # etcd_version: v3.2.7
 
 ## Passwords

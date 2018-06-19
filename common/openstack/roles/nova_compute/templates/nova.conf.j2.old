@@ -8040,7 +8040,7 @@ lock_path = /var/lib/nova/tmp
 # A URL representing the messaging driver to use for notifications. If not set,
 # we fall back to the same configuration used for RPC. (string value)
 # Deprecated group/name - [DEFAULT]/notification_transport_url
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
+transport_url = rabbit://openstack:fn!xo!ska!@172.25.0.55
 
 # AMQP topic used for OpenStack notifications. (list value)
 # Deprecated group/name - [rpc_notifier2]/topics
