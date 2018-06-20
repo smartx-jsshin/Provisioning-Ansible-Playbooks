@@ -1,0 +1,25 @@
+---
+- name: Install OpenVSwitch package
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - openvswitch-switch
+
+- name: Copy and set the script
+  template:
+    src: SmartXProvisioning_createOVSBridge.sh.j2
+    dest: /tmp/SmartXProvisioning_createOVSBridge.sh
+    mode: 0744
+    owner: root
+    group: root
+
+- name: Configure bridge
+  become_user: root
+  become: true
+  shell: "/tmp/SmartXProvisioning_createOVSBridge.sh"
+
+- name: Clean up the script
+  file:
+    state: absent
+    path: "/tmp/SmartXProvisioning_createOVSBridge.sh"

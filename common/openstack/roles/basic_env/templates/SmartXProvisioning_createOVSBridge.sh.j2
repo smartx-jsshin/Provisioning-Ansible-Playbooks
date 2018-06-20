@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Written by Moonjoong Kang <mjkang@smartx.kr>
+
+BRIDGE_NAME="{{ mgmt_ovs_bridge_name }}"
+
+# Initial variables initialization
+DEF_GW_INT=`ip -o route show | grep default | awk '{print $NF}'`
+DEF_GW_INT_MACADDR=`ip -o link | grep $DEF_GW_INT | awk '{print $(NF-2)}'`
+DEF_GW_IPADDR=`ip -o route show | grep default | awk '{print $3}'`
+DEF_GW_INT_IPV4ADDR=`ip -o addr show $DEF_GW_INT | grep "inet " | awk '{print $4}'`
+
+# Checking if the default gateway interface is OVS bridge
+BOOL_DEF_GW_INT_OVS_BR=`ovs-vsctl show | grep "Bridge $DEF_GW_INT" | wc -l`
+
+# If the default gateway interface is OVS bridge...
+if [ "$BOOL_DEF_GW_INT_OVS_BR" -eq "1" ]; then
+    # And if it doesn't have the name with BRIDGE_NAME...
+    if [ "$DEF_GW_INT" != "$BRIDGE_NAME" ]; then
+        # Fail with error (Reason: Nested OVS bridge isn't allowed)
+        echo "Fail: The interface locally linked with default gateway is an OVS bridge and its name doesn't match with \"$BRIDGE_NAME\"! Nested OVS bridge isn't allowed."
+        exit 1
+    fi
+
+    # No jobs required. Ending the script gracefully.
+    exit 0
+fi
+
+# Default gateway interface isn't an OVS bridge
+BOOL_BRIDGE_EXISTS=`ovs-vsctl show | grep "Bridge $BRIDGE_NAME" | wc -l`
+
+# If the bridge doesn't exists...
+if [ "$BOOL_BRIDGE_EXISTS" -eq "0" ]; then
+    # Creating the OVS bridge...
+    ovs-vsctl add-br $BRIDGE_NAME || exit $? # Fail with error (Reason: ovs-vsctl failed to create the bridge)
+fi
+
+# Checking if the OS is running on an OpenStack Instance
+BOOL_IS_OPENSTACK_INSTANCE=`dmidecode -s system-manufacturer | grep "OpenStack" | wc -l`
+
+# If the OS is running on an OpenStack Instance...
+if [ "$BOOL_IS_OPENSTACK_INSTANCE" -eq "1" ]; then
+    # Creating the OVS bridge...
+    ovs-vsctl set Bridge $BRIDGE_NAME other_config:hwaddr="$DEF_GW_INT_MACADDR" || exit $? # Fail with error (Reason: ovs-vsctl failed to change the bridge's MAC address)
+fi
+
+# IMPORTANT PART: AN INTERRUPTION MAY CAUSE NETWORK TO BECOME UNACCESSIBLE AFTER THIS LINE
+ip link set $BRIDGE_NAME up
+ovs-vsctl add-port $BRIDGE_NAME $DEF_GW_INT
+ip addr delete $DEF_GW_INT_IPV4ADDR dev $DEF_GW_INT
+ip addr add $DEF_GW_INT_IPV4ADDR dev $BRIDGE_NAME
+ip route change default via $DEF_GW_IPADDR 2> /dev/null || ip route add default via $DEF_GW_IPADDR
+
+exit 0

@@ -3,5 +3,5 @@
     vars_files:
       - control_config.yaml
     roles:
-#     - basic_env
+      - basic_env_compute
       - nova_compute

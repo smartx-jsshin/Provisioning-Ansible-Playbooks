@@ -7,3 +7,4 @@
       - keystone
       - glance
       - nova
+      - neutron

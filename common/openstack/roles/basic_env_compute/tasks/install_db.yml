@@ -1,0 +1,65 @@
+---
+  - name: Install MariaDB
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - mariadb-server
+      - python-pymysql
+      - python-mysqldb
+
+  - name: Templating DB Confgiuration file
+    template:
+      src: 99-openstack.cnf.j2
+      dest: /etc/mysql/mariadb.conf.d/99-openstack.cnf
+      owner: root
+      group: root
+      mode: 0644
+    notify: Restart MySQL service
+  - meta: flush_handlers
+
+  - name: update mysql root password for all root accounts
+    mysql_user:
+      name: root
+      host: localhost
+      password: "{{ mysql_root_password }}"
+
+  # Need to do this for idempotency, see
+  # http://ansible.cc/docs/modules.html#mysql-user
+  - name: copy .my.cnf file with root password credentials
+    template:
+      src: .my.cnf.j2
+      dest: /root/.my.cnf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: update mysql root password for all root accounts
+    mysql_user:
+      name: root
+      host: "{{ item }}"
+      password: "{{ mysql_root_password }}"
+      priv: "*.*:ALL,GRANT"
+    with_items:
+      - "{{ ansible_hostname }}"
+      - localhost
+      - 127.0.0.1
+      - ::1
+
+  - name: ensure anonymous users are not in the database
+    mysql_user:
+      name: ""
+      host: "{{ item }}"
+      state: absent
+    with_items:
+      - "{{ ansible_hostname }}"
+      - "{{ inventory_hostname }}"
+      - localhost
+      - 127.0.0.1
+      - ::1
+      - "%"
+
+  - name: Removes the MySQL test database
+    mysql_db:
+      name: test
+      state: absent

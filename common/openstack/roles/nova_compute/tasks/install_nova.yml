@@ -6,6 +6,20 @@
   with_items:
     - nova-compute
 
+- name: "Intermediate processing: Set the virtualization to KVM"
+  set_fact:
+    virt_type: "kvm"
+
+- name: "Intermediate processing: Check the compute host's hardware acceleration capability. Is it running on an OpenStack Instance?"
+  register: hw_acc
+  shell: "dmidecode -s system-manufacturer | grep \"OpenStack\" | wc -l"
+# shell: "egrep -c '(vmx|svm)' /proc/cpuinfo"
+
+- name: "Intermediate processing: Change the virtualization to QEMU"
+  set_fact:
+    virt_type: "qemu"
+  when: "hw_acc.stdout | int != 0"
+
 # Assertion: No host belongs to more than one group
 - name: "Intermediate processing: Extracting domain names from services"
   set_fact:
@@ -15,13 +29,11 @@
           {% set ignored = res.extend([{ 'name': host, 'group': hostvars[host]['group_names'][0], 'mgmt_ip': hostvars[host].mgmt_ip, 'ctrl_ip': hostvars[host].ctrl_ip, 'data_ip': hostvars[host].data_ip, 'mgmt_ip_womask': (hostvars[host].mgmt_ip | ipaddr('address')), 'ctrl_ip_womask': (hostvars[host].ctrl_ip | ipaddr('address')), 'data_ip_womask': (hostvars[host].data_ip | ipaddr('address')) }]) -%}
         {%- endfor %}
         {{ res }}
-#         {% set ignored = res.extend([{'name': host, 'group': hostvars[host]['group_names'][0], 'mgmt_ip': hostvars[host].mgmt_ip, 'ctrl_ip': hostvars[host].ctrl_ip, 'data_ip': hostvars[host].data_ip, 'mgmt_ip_womask': (hostvars[host].mgmt_ip | ipaddr_womask_filter), 'ctrl_ip_womask': (hostvars[host].ctrl_ip | ipaddr_womask_filter), 'data_ip_womask': (hostvars[host].data_ip | ipaddr_womask_filter)}]) -%}
 
 # Assertion: Only one control host exists
 - name: "Intermediate processing: Control host"
   set_fact:
     controller: "{{ hosts_list | selectattr('group', 'match', '^'+'openstack_control'+'$') | list | first }}"
-#   controller: "{{ hosts_list | selectattr('group', 'match', '^'+'openstack_control'+'$') | list }}"
 
 - name: Template nova.conf
   template:
@@ -31,19 +43,6 @@
     owner: root
     group: nova
     backup: yes
-
-- name: "Intermediate processing: Set the virtualization to KVM"
-  set_fact:
-    virt_type: "kvm"
-
-- name: "Intermediate processing: Check the compute host's hardware acceleration capability"
-  register: hw_acc
-  shell: "egrep -c '(vmx|svm)' /proc/cpuinfo"
-
-- name: "Intermediate processing: Change the virtualization to QEMU"
-  set_fact:
-    virt_type: "qemu"
-  when: "hw_acc.stdout | int == 0"
 
 - name: Template nova.conf
   template:

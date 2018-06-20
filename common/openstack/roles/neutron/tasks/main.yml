@@ -1,2 +1,5 @@
 ---
 # tasks file for neutron
+- include_tasks: create_db.yml
+- include_tasks: configure_default_auth.yml
+- include_tasks: install_neutron.yml

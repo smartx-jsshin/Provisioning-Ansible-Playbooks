@@ -5,6 +5,7 @@ openstack_distro: queens
 mgmt_ip_womask: "{{ mgmt_ip|ipaddr_womask_filter }}"
 ctrl_ip_womask: "{{ ctrl_ip|ipaddr_womask_filter }}"
 data_ip_womask: "{{ data_ip|ipaddr_womask_filter }}"
+mgmt_ovs_bridge_name: br-ex
 # These variables are for "control" target host.
 
 # etcd_version: v3.2.7
@@ -15,6 +16,11 @@ rabbit_pass: openstack
 mysql_root_password: openstack
 keystone_db_pass: openstack
 demo_pass: openstack
+nova_pass: openstack
+nova_db_pass: openstack
+placement_pass: openstack
+neutron_pass: openstack
+neutron_db_pass: openstack
 
 ## For Keystone
 # keystone_admin_url_port: 35357
@@ -31,14 +37,14 @@ glance_internal_url_port: 9292
 glance_public_url_port: 9292
 ## For Cinder
 ## For Nova
-nova_pass: openstack
-nova_db_pass: openstack
 nova_admin_url_port: 8744
 nova_internal_url_port: 8774
 nova_public_url_port: 8774
-placement_pass: openstack
 placement_admin_url_port: 8778
 placement_internal_url_port: 8778
 placement_public_url_port: 8778
 ## For Neutron
+neutron_admin_url_port: 9696
+neutron_internal_url_port: 9696
+neutron_public_url_port: 9696
 ## For Horizon

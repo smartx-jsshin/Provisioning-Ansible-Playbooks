@@ -1,0 +1,19 @@
+---
+- name: Install Memcached Packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - memcached
+    - python-memcache
+
+- name: Templating Memcached Configuration File
+  template:
+    src: memcached.conf.j2
+    dest: /etc/memcached.conf
+    mode: 0644
+    owner: root
+    group: root
+    backup: yes
+  notify: Restart Memcached service
+- meta: flush_handlers

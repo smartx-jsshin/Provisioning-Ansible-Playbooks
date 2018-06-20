@@ -1,0 +1,43 @@
+---
+- name: Get neutron User
+  shell: ". /root/admin-openrc.sh && openstack user show neutron -f json"
+  register: get_neutron_user
+  ignore_errors: True
+
+- name: Create neutron User
+  shell: ". /root/admin-openrc.sh && openstack user create --domain \"Default\" --password \"{{ neutron_pass }}\" -f json neutron"
+  when: get_neutron_user is failed
+
+- name: Associate neutron user to admin role
+  shell: ". /root/admin-openrc.sh && openstack role add --project service --user neutron admin"
+
+- name: Get neutron Service
+  shell: ". /root/admin-openrc.sh && openstack service show neutron -f json"
+  register: get_neutron_service
+  ignore_errors: True
+
+- name: Create neutron Service
+  shell: ". /root/admin-openrc.sh && openstack service create --name neutron --description \"OpenStack Networking\" -f json network"
+  when: get_neutron_service is failed
+
+- name: Get Neutron Endpoints
+  shell: ". /root/admin-openrc.sh && openstack endpoint list -f json"
+  register: get_neutron_endpoints
+  ignore_errors: True
+
+- name: Parsing Endpoint JSON
+  set_fact:
+    neutron_endpoints: "{{ get_neutron_endpoints.stdout | from_json }}"
+  when: get_neutron_endpoints is succeeded
+
+- name: Create Neutron Service Public API Endpoint
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region RegionOne network public http://{{ mgmt_ip_womask }}:{{ neutron_public_url_port }}"
+  when: "neutron_endpoints | selectattr('Service Type', 'match', '^'+'network'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'neutron'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_ip_womask | regex_escape())+':'+(neutron_public_url_port | string)+'$') | list | length == 0"
+
+- name: Create Neutron Service Internal API Endpoint
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region RegionOne network internal http://{{ ctrl_ip_womask }}:{{ neutron_internal_url_port }}"
+  when: "neutron_endpoints | selectattr('Service Type', 'match', '^'+'network'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'neutron'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(neutron_internal_url_port | string)+'$') | list | length == 0"
+
+- name: Create Neutron Service Admin API Endpoint
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region RegionOne network admin http://{{ ctrl_ip_womask }}:{{ neutron_admin_url_port }}"
+  when: "neutron_endpoints | selectattr('Service Type', 'match', '^'+'network'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'neutron'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(neutron_admin_url_port | string)+'$') | list | length == 0"

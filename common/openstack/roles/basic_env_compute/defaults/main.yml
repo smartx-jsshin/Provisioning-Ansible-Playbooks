@@ -1,0 +1,10 @@
+---
+# defaults file for basic_env
+openstack_distro: queens
+rabbit_pass: openstack
+ctrl_ip_womask: 127.0.0.1
+chrony_ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+  - 2.pool.ntp.org
+  - 3.pool.ntp.org
