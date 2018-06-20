@@ -1,0 +1,41 @@
+---
+  - name: Create nova-api DB for Nova
+    mysql_db:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: 127.0.0.1
+      name: nova_api
+      state: present
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Create nova DB for Nova
+    mysql_db:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: 127.0.0.1
+      name: nova
+      state: present
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Create nova_cell0 DB for Nova
+    mysql_db:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: 127.0.0.1
+      name: nova_cell0
+      state: present
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Grant access to the DBs for the service for User nova@localhost
+    shell: "mysql -u root -e \"grant all privileges on {{ item }}.* to 'nova'@'localhost' identified by '{{ nova_db_pass }}'\""
+    with_items:
+    - nova_api
+    - nova
+    - nova_cell0
+
+  - name: Grant access to the DBs for the service for User nova@0.0.0.0
+    shell: "mysql -u root -e \"grant all privileges on {{ item }}.* to 'nova'@'%' identified by '{{ nova_db_pass }}'\""
+    with_items:
+    - nova_api
+    - nova
+    - nova_cell0

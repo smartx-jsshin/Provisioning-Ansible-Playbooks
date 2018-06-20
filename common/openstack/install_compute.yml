@@ -5,3 +5,4 @@
     roles:
       - basic_env_compute
       - nova_compute
+      - neutron_compute

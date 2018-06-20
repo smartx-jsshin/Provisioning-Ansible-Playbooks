@@ -7456,7 +7456,7 @@ password = {{ nova_pass }}
 # Adapter configuration options. In the current release, "url" will override
 # this behavior, but will be ignored and/or removed in a future release. To
 # achieve the same result, use the endpoint_override option instead.
-url = http://172.25.0.55:9696
+url = http://{{ controller.ctrl_ip_womask }}:{{ neutron_internal_url_port }}
 
 #
 # Default name for the Open vSwitch integration bridge.
@@ -7532,7 +7532,7 @@ auth_type = password
 #auth_section = <None>
 
 # Authentication URL (string value)
-auth_url = http://172.25.0.55:5000
+auth_url = http://{{ controller.ctrl_ip_womask }}:{{ keystone_internal_url_port }}
 
 # Scope for system operations (string value)
 #system_scope = <None>
@@ -7582,7 +7582,7 @@ username = neutron
 user_domain_name = default
 
 # User's password (string value)
-password = fn!xo!ska!
+password = {{ neutron_pass }}
 
 # Tenant ID (string value)
 #tenant_id = <None>
