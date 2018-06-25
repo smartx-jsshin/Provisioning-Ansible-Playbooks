@@ -1,2 +1,5 @@
 k8s/temp/*
 common/openstack/inventory.yaml.bak
+common/openstack/inventory.yaml.k-cluster
+common/openstack/inventory.yaml.vm
+common/openstack/inventory.yaml.default
