@@ -19,6 +19,15 @@
     deb: /tmp/grafana.deb
     state: present
 
+- name: Templating Grafana.ini
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    owner: root
+    group: grafana
+    backup: yes
+    mode: 0640
+
 - name: Starting Grafana service
   systemd:
     name: grafana-server
