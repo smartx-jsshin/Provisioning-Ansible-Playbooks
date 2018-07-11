@@ -1,6 +1,6 @@
 ---
 # tasks file for iovisor
-- name: Installing Kernel Header Generic
+- name: Installing Newer Kernel Images
   apt:
     deb: "{{ item }}"
   with_items:
