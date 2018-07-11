@@ -1,8 +1,6 @@
 ---
-  - hosts: box
-    vars:
-      kernel_version:
-      iovisor_github:
-    roles:
-      - kernel
-      - iovisor
+- hosts: all
+  vars_files:
+    - configurations.yaml
+  roles:
+    - iovisor

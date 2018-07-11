@@ -1,2 +1,56 @@
 ---
 # tasks file for iovisor
+- name: Installing Kernel Header Generic
+  apt:
+    deb: "{{ item }}"
+  with_items:
+    "{{ kernel_image_url }}"
+  register: kernel_installed
+
+- name: Restart The kernel installed Box
+  shell: sleep 2 && shutdown -r now "Ansible Reboot after Installing Kernel"
+  async: 1
+  poll: 0
+  when: kernel_installed is changed
+
+- name: Wating for Box to be started
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  when: kernel_installed is changed
+
+- name: Upgrade All Ubuntu Packages
+  apt:
+    upgrade: dist
+    update_cache: yes
+
+- name: Install Ubuntu Packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python
+    - python-pip
+
+- name: Install Python Packages by pip
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - influxdb
+    - bs4
+
+- name: Add Apt Repository for IO Visor
+  apt_repository:
+    repo: "deb [trusted=yes] https://repo.iovisor.org/apt/xenial xenial-nightly main"
+    state: present
+
+- name: Install IO Visor Packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - bcc-tools
+    - libbcc-examples
