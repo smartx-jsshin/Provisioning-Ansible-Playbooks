@@ -5,11 +5,47 @@
 
 BRIDGE_NAME="{{ mgmt_ovs_bridge_name }}"
 
+# Checking Linux Distribution
+DISTRO=`awk -F= '/^NAME/{print $2}' /etc/os-release | sed "s/\"//g"`
+DIST_UBUNTU=`echo $DISTRO | grep "^Ubuntu.*" | wc -l`
+DIST_CENTOS=`echo $DISTRO | grep "^CentOS.*" | wc -l`
+DIST_UNKNOWN="1"
+
+if [ "$DIST_UBUNTU" == "1" ]
+    then
+        DISTRO="Ubuntu"
+        DISTRO_VERSION=`grep -Po "^VERSION=\"\K[^ ]+" /etc/os-release`
+        NETWORK_CONFIG_FILE="/etc/network/interfaces"
+        DIST_UNKNOWN="0"
+fi
+
+if [ "$DIST_CENTOS" == "1" ]
+    then
+        DISTRO="CentOS"
+        DISTRO_VERSION=`grep -Po "^VERSION=\"\K[^ ]+" /etc/os-release`
+        NETWORK_CONFIG_DIR="/etc/sysconfig/network-scripts"
+        DIST_UNKNOWN="0"
+fi
+
+if [ "$DIST_UNKNOWN" == "1" ]
+    then
+        echo "Failed to identify Linux Distro"
+	exit 1
+fi
+
 # Initial variables initialization
-DEF_GW_INT=`ip -o route show | grep default | awk '{print $NF}'`
-DEF_GW_INT_MACADDR=`ip -o link | grep $DEF_GW_INT | awk '{print $(NF-2)}'`
-DEF_GW_IPADDR=`ip -o route show | grep default | awk '{print $3}'`
-DEF_GW_INT_IPV4ADDR=`ip -o addr show $DEF_GW_INT | grep "inet " | awk '{print $4}'`
+DEF_GW_INT=`ip -o route show | grep -Po '^default.* dev \K[^ ]+'`
+DEF_GW_INT_MACADDR=`ip -o link list | grep -Po "^[0-9]\: $DEF_GW_INT\: .* link\/ether \K[^ ]+"`
+DEF_GW_IPADDR=`ip -o route show | grep -Po '^default.* via \K[^ ]+'`
+DEF_GW_INT_IPV4ADDR=`ip -o addr show $DEF_GW_INT | grep -Po '.* inet \K[^ ]+'`
+
+echo "Collected info:"
+echo "Linux Distribution: $DISTRO"
+echo "Linux Distribution Version: $DISTRO_VERSION"
+echo "Default Gateway Interface: $DEF_GW_INT"
+echo "Default Gateway MAC Address: $DEF_GW_INT_MACADDR"
+echo "Default Gateway IP Address: $DEF_GW_IPADDR"
+echo "Default Gateway Interface IPv4 Address: $DEF_GW_INT_IPV4ADDR"
 
 # Checking if the default gateway interface is OVS bridge
 BOOL_DEF_GW_INT_OVS_BR=`ovs-vsctl show | grep "Bridge $DEF_GW_INT" | wc -l`
@@ -53,37 +89,47 @@ ip addr add $DEF_GW_INT_IPV4ADDR dev $BRIDGE_NAME
 ip route change default via $DEF_GW_IPADDR 2> /dev/null || ip route add default via $DEF_GW_IPADDR
 # THE END OF DANGEROUS PART
 
-BOOL_IS_DHCP="0"
+if [ "$DIST_UBUNTU" == "1" ]; then
 
-# Searching through /etc/network/interfaces and included configuration files
-# LIMIT: Only "source" command inside /etc/network/interfaces file is processed
-for fn in `cat /etc/network/interfaces | grep "^[ ]*source.*$" | awk '{print $2}'`; do
+    BOOL_IS_DHCP="0"
 
-    # Checking if the interface is configured via DHCP
-    BOOL_IS_DHCP=`find "$fn" -type f -exec grep "^[ ]*auto[ ]*$DEF_GW_INT" {} \; 2> /dev/null | wc -l`
+    # Searching through /etc/network/interfaces and included configuration files
+    # LIMIT: Only "source" command inside /etc/network/interfaces file is processed
+    sed -i.bak -r "s/([ ]*auto[ ]*)($DEF_GW_INT)/\1$BRIDGE_NAME/g" $NETWORK_CONFIG_FILE
+    sed -i.bak -r "s/([ ]*iface[ ]*)($DEF_GW_INT)(.*)/\1$BRIDGE_NAME\3/g" $NETWORK_CONFIG_FILE
+    for fn in `cat $NETWORK_CONFIG_FILE | grep "^[ ]*source.*$" | awk '{print $2}'`; do
 
-    # Updating configuration files: Switching DEF_GW_INT entries to BRIDGE_NAME entries
-    find "$fn" -type f -exec sed -i.bak -r "s/([ ]*auto[ ]*)($DEF_GW_INT)/\1$BRIDGE_NAME/g" {} \; -exec sed -i.bak -r "s/([ ]*iface[ ]*)($DEF_GW_INT)(.*)/\1$BRIDGE_NAME\3/g" {} \; 2> /dev/null
-done
+        # Checking if the interface is configured via DHCP
+        BOOL_IS_DHCP=`find "$fn" -type f -exec grep "^[ ]*auto[ ]*$DEF_GW_INT" {} \; 2> /dev/null | wc -l`
 
-# If the interface is configured via DHCP...
-if [ "$BOOL_IS_DHCP" -ne "0" ]; then
-    if [ "$BOOL_IS_OPENSTACK_INSTANCE" -ne "0" ]; then
-        # Checking if the line the script is going to insert already exists
-        BOOL_DHCLIENT_LIST_INSERTED=`grep -Pzo "dhclient \|\| true\nexit 0" /etc/rc.local | wc -l`
-        if [ "$BOOL_DHCLIENT_LIST_INSERTED" -ne "0" ]; then
-            # No further operations required. Gracefully shutting down with success.
-            exit 0
-        fi
+        # Updating configuration files: Switching DEF_GW_INT entries to BRIDGE_NAME entries
+        find "$fn" -type f -exec sed -i.bak -r "s/([ ]*iface[ ]*)($DEF_GW_INT)(.*)/\1$BRIDGE_NAME\3/g" {} \; -exec sed -i.bak -r "s/([ ]*auto[ ]*)($DEF_GW_INT)/auto $DEF_GW_INT\niface $DEF_GW_INT inet manual\n\n\1$BRIDGE_NAME/g" {} \; 2> /dev/null
+    done
 
-        # Inserting dhclient update command into /etc/rc.local
-        BOOL_EXIT_0_EXISTS=`grep "^[ ]*exit 0[ ]*$" /etc/rc.local | wc -l`
-        if [ "$BOOL_EXIT_0_EXISTS" -ne "0" ]; then
-            sed -i.bak -r '$s/[ ]*exit 0/dhclient || true\nexit 0/' /etc/rc.local
-        else
-            echo "dhclient || true\nexit 0" >> /etc/rc.local
+    # If the interface is configured via DHCP...
+    if [ "$BOOL_IS_DHCP" -ne "0" ]; then
+        if [ "$BOOL_IS_OPENSTACK_INSTANCE" -ne "0" ]; then
+            # Checking if the line the script is going to insert already exists
+            BOOL_DHCLIENT_LIST_INSERTED=`grep -Pzo "dhclient \|\| true\nexit 0" /etc/rc.local | wc -l`
+            if [ "$BOOL_DHCLIENT_LIST_INSERTED" -ne "0" ]; then
+                # No further operations required. Gracefully shutting down with success.
+                exit 0
+            fi
+
+            # Inserting dhclient update command into /etc/rc.local
+            BOOL_EXIT_0_EXISTS=`grep "^[ ]*exit 0[ ]*$" /etc/rc.local | wc -l`
+            if [ "$BOOL_EXIT_0_EXISTS" -ne "0" ]; then
+                sed -i.bak -r '$s/[ ]*exit 0/dhclient || true\nexit 0/' /etc/rc.local
+            else
+                echo "dhclient || true\nexit 0" >> /etc/rc.local
+            fi
         fi
     fi
+
+fi
+
+if [ "$DIST_CENTOS" == "1" ]; then
+    echo "Warning: CentOS's configuration file update isn't supported yet. It has to be updated manually or the server may be inaccessible after a reboot."
 fi
 
 exit 0
