@@ -1,8 +1,8 @@
 all:
   children:
-    openstack-control:
+    openstack_control:
       hosts:
-        openstack-control1:
+        openstack_control1:
           ansible_host: 192.168.100.101
           ansible_user: vagrant
           ansible_become: yes
@@ -10,9 +10,9 @@ all:
           ctrl_ip: 192.168.101.101/24
           data_ip: 192.168.102.101/24
 
-    openstack-compute:
+    openstack_compute:
       hosts:
-        openstack-compute1:
+        openstack_compute1:
           ansible_host: 192.168.100.102
           ansible_user: vagrant
           ansible_become: yes
@@ -20,7 +20,7 @@ all:
           ctrl_ip: 192.168.101.102/24
           data_ip: 192.168.102.102/24
 
-        openstack-compute2:
+        openstack_compute2:
           ansible_host: 192.168.100.103
           ansible_user: vagrant
           ansible_become: yes
