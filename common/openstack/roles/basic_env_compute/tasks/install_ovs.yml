@@ -6,6 +6,14 @@
   with_items:
     - openvswitch-switch
 
+- name: Reload services
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - ovsdb-server
+  - ovs-vswitchd
+
 - name: Copy and set the script
   template:
     src: SmartXProvisioning_createOVSBridge.sh.j2
