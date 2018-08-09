@@ -3,12 +3,12 @@
   remote_user: ubuntu
   become: yes
   vars:
-    - distro_full_name: "xUbuntu_{{ os_distro_version }}"
+    - distro_full_name: "xUbuntu_{{ distro_version }}"
     - zeromq_repo_url: "http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/{{ distro_full_name }}/"
     - zeromq_key_url: "https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/{{ distro_full_name }}/Release.key"
   tasks:
     - name: Add ZeroMQ Repo to APT repo list
-      lineinline:
+      lineinfile:
         path: /etc/apt/sources.list
         line: "deb {{ zeromq_repo_url }} ./"
     - name: Add ZeroMQ GPG key to APT Key Server
