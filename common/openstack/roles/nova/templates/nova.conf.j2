@@ -7508,7 +7508,7 @@ service_metadata_proxy = true
 #
 # * service_metadata_proxy
 #  (string value)
-metadata_proxy_shared_secret = METADATA_SECRET
+metadata_proxy_shared_secret = {{ neutron_metadata_secret }}
 
 # PEM encoded Certificate Authority to use when verifying HTTPs connections.
 # (string value)
@@ -9615,7 +9615,7 @@ password = {{ placement_pass }}
 #
 # * IP address to listen on.
 #  (string value)
-server_listen = 172.25.0.55
+server_listen = {{ ctrl_ip_womask }}
 
 #
 # The address used by ``nova-spicehtml5proxy`` client to connect to instance
@@ -9635,7 +9635,7 @@ server_listen = 172.25.0.55
 #   The proxy client must be able to access the address specified in
 #   ``server_listen`` using the value of this option.
 #  (string value)
-server_proxyclient_address = 172.25.0.55
+server_proxyclient_address = {{ ctrl_ip_womask }}
 
 #
 # A keyboard layout which is supported by the underlying hypervisor on this

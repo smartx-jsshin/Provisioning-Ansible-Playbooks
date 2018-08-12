@@ -21,6 +21,7 @@ nova_db_pass: openstack
 placement_pass: openstack
 neutron_pass: openstack
 neutron_db_pass: openstack
+neutron_metadata_secret: METADATA_SECRET
 
 ## For Keystone
 # keystone_admin_url_port: 35357
@@ -37,7 +38,7 @@ glance_internal_url_port: 9292
 glance_public_url_port: 9292
 ## For Cinder
 ## For Nova
-nova_admin_url_port: 8744
+nova_admin_url_port: 8774
 nova_internal_url_port: 8774
 nova_public_url_port: 8774
 placement_admin_url_port: 8778

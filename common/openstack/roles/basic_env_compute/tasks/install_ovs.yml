@@ -12,7 +12,7 @@
     state: restarted
   with_items:
   - openvswitch-switch
-  - openvswitch-nonetwork
+# - openvswitch-nonetwork
 
 - name: Copy and set the script
   template:
