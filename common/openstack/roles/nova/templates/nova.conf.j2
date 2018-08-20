@@ -7602,7 +7602,7 @@ password = {{ neutron_pass }}
 #valid_interfaces = internal,public
 
 # The default region_name for endpoint URL discovery. (string value)
-region_name = RegionOne
+region_name = {{ openstack_region }}
 
 # Always use this endpoint URL for requests for this client. NOTE: The
 # unversioned endpoint should be specified here; to request a particular API
@@ -8645,7 +8645,7 @@ transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
 
 
 [placement]
-os_region_name = RegionOne
+os_region_name = {{ openstack_region }}
 project_domain_name = Default
 project_name = service
 auth_type = password

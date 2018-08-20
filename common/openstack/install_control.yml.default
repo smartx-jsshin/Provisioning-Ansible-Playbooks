@@ -1,0 +1,11 @@
+---
+  - hosts: openstack_control
+    vars_files:
+      - control_config.yaml
+    roles:
+      - basic_env
+      - keystone
+      - glance
+      - nova
+      - neutron
+      - horizon

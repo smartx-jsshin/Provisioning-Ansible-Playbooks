@@ -7600,7 +7600,7 @@ password = {{ neutron_pass }}
 #valid_interfaces = internal,public
 
 # The default region_name for endpoint URL discovery. (string value)
-region_name = RegionOne
+region_name = {{ openstack_region }}
 
 # Always use this endpoint URL for requests for this client. NOTE: The
 # unversioned endpoint should be specified here; to request a particular API
@@ -8660,7 +8660,7 @@ lock_path = /var/lib/nova/tmp
 # Its value may be silently ignored in the future.
 # Reason: Endpoint lookup uses the service catalog via common keystoneauth1
 # Adapter configuration options.  Use the region_name option instead.
-os_region_name = RegionOne
+os_region_name = {{ openstack_region }}
 
 # DEPRECATED:
 # Endpoint interface for this node. This is used when picking the URL in the

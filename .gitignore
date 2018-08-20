@@ -5,3 +5,5 @@ common/openstack/inventory.yaml.vm
 common/openstack/inventory.yaml.default
 common/openstack/install_control.retry
 common/openstack/install_compute.retry
+common/openstack/control_config.yaml.default
+common/openstack/control_config.yaml.bak

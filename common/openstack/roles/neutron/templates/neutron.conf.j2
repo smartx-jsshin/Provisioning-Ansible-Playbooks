@@ -1104,7 +1104,7 @@ password = {{ neutron_pass }}
 
 # Name of nova region to use. Useful if keystone manages more than one region.
 # (string value)
-region_name = RegionOne
+region_name = {{ openstack_region }}
 
 # Type of the nova endpoint to use.  This endpoint will be looked up in the
 # keystone catalog and should be one of public, internal or admin. (string
