@@ -11,8 +11,9 @@
 
 - name: Add OpenStack Repository
   apt_repository:
-    repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu xenial-updates/{{ openstack_distro }} main"
+    repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu {{ ansible_distribution_release }}-updates/{{ openstack_distro }} main"
     update_cache: yes
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
 
 - name: Upgrade all packages
   apt:

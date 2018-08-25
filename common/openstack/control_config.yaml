@@ -6,6 +6,9 @@ mgmt_ip_womask: "{{ mgmt_ip|ipaddr_womask_filter }}"
 ctrl_ip_womask: "{{ ctrl_ip|ipaddr_womask_filter }}"
 data_ip_womask: "{{ data_ip|ipaddr_womask_filter }}"
 mgmt_ovs_bridge_name: br-ex
+ovs_bridge_mappings: mgmt:br-ex
+flat_network_list: mgmt
+novncproxy_base_url: http://your-cloud.example.com:6080/vnc_auto.html
 # These variables are for "control" target host.
 
 # etcd_version: v3.2.7

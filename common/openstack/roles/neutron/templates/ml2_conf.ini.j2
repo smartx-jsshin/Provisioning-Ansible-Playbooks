@@ -183,7 +183,7 @@ extension_drivers = port_security
 # List of physical_network names with which flat networks can be created. Use
 # default '*' to allow flat networks with arbitrary physical_network names. Use
 # an empty list to disable flat networks. (list value)
-flat_networks = external
+flat_networks = {{ flat_network_list }}
 
 
 [ml2_type_geneve]

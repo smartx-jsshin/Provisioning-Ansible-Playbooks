@@ -31,16 +31,16 @@
   when: get_nova_endpoints is succeeded
 
 - name: Create Nova Service Public API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} compute public http://{{ mgmt_ip_womask }}:{{ nova_public_url_port }}/v2.1"
-  when: "nova_endpoints | selectattr('Service Type', 'match', '^'+'compute'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'nova'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_ip_womask | regex_escape())+':'+(nova_public_url_port | string)+('/v2.1' | regex_escape())+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} compute public http://{{ mgmt_endpoint }}:{{ nova_public_url_port }}/v2.1"
+  when: "nova_endpoints | selectattr('Service Type', 'match', '^'+'compute'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'nova'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_endpoint | regex_escape())+':'+(nova_public_url_port | string)+('/v2.1' | regex_escape())+'$') | list | length == 0"
 
 - name: Create Nova Service Internal API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} compute internal http://{{ ctrl_ip_womask }}:{{ nova_internal_url_port }}/v2.1"
-  when: "nova_endpoints | selectattr('Service Type', 'match', '^'+'compute'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'nova'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(nova_internal_url_port | string)+('/v2.1' | regex_escape())+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} compute internal http://{{ ctrl_endpoint }}:{{ nova_internal_url_port }}/v2.1"
+  when: "nova_endpoints | selectattr('Service Type', 'match', '^'+'compute'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'nova'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_endpoint | regex_escape())+':'+(nova_internal_url_port | string)+('/v2.1' | regex_escape())+'$') | list | length == 0"
 
 - name: Create Nova Service Admin API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} compute admin http://{{ ctrl_ip_womask }}:{{ nova_admin_url_port }}/v2.1"
-  when: "nova_endpoints | selectattr('Service Type', 'match', '^'+'compute'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'nova'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(nova_admin_url_port | string)+('/v2.1' | regex_escape())+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} compute admin http://{{ ctrl_endpoint }}:{{ nova_admin_url_port }}/v2.1"
+  when: "nova_endpoints | selectattr('Service Type', 'match', '^'+'compute'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'nova'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_endpoint | regex_escape())+':'+(nova_admin_url_port | string)+('/v2.1' | regex_escape())+'$') | list | length == 0"
 
 - name: Get placement User
   shell: ". /root/admin-openrc.sh && openstack user show placement -f json"
@@ -74,14 +74,14 @@
   when: get_placement_endpoints is succeeded
 
 - name: Create Placement Service Public API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} placement public http://{{ mgmt_ip_womask }}:{{ placement_public_url_port }}"
-  when: "placement_endpoints | selectattr('Service Type', 'match', '^'+'placement'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'placement'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_ip_womask | regex_escape())+':'+(placement_public_url_port | string)+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} placement public http://{{ mgmt_endpoint }}:{{ placement_public_url_port }}"
+  when: "placement_endpoints | selectattr('Service Type', 'match', '^'+'placement'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'placement'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_endpoint | regex_escape())+':'+(placement_public_url_port | string)+'$') | list | length == 0"
 
 - name: Create Placement Service Internal API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} placement internal http://{{ ctrl_ip_womask }}:{{ placement_internal_url_port }}"
-  when: "placement_endpoints | selectattr('Service Type', 'match', '^'+'placement'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'placement'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(placement_internal_url_port | string)+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} placement internal http://{{ ctrl_endpoint }}:{{ placement_internal_url_port }}"
+  when: "placement_endpoints | selectattr('Service Type', 'match', '^'+'placement'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'placement'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_endpoint | regex_escape())+':'+(placement_internal_url_port | string)+'$') | list | length == 0"
 
 - name: Create Placement Service Admin API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} placement admin http://{{ ctrl_ip_womask }}:{{ placement_admin_url_port }}"
-  when: "placement_endpoints | selectattr('Service Type', 'match', '^'+'placement'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'placement'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(placement_admin_url_port | string)+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} placement admin http://{{ ctrl_endpoint }}:{{ placement_admin_url_port }}"
+  when: "placement_endpoints | selectattr('Service Type', 'match', '^'+'placement'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'placement'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_endpoint | regex_escape())+':'+(placement_admin_url_port | string)+'$') | list | length == 0"
 

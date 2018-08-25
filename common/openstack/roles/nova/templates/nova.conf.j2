@@ -3156,7 +3156,7 @@ firewall_driver = nova.virt.firewall.NoopFirewallDriver
 # oslo_messaging.TransportURL at
 # https://docs.openstack.org/oslo.messaging/latest/reference/transport.html
 # (string value)
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
+transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_endpoint }}
 
 # DEPRECATED: The messaging driver to use, defaults to rabbit. Other drivers
 # include amqp and zmq. (string value)
@@ -3502,7 +3502,7 @@ auth_strategy=keystone
 
 
 [api_database]
-connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_ip_womask }}/nova_api
+connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_endpoint }}/nova_api
 #
 # The *Nova API Database* is a separate database which is used for information
 # which is used across *cells*. This database is mandatory since the Mitaka
@@ -4558,7 +4558,7 @@ enable = False
 
 
 [database]
-connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_ip_womask }}/nova
+connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_endpoint }}/nova
 
 #
 # From oslo.db
@@ -5205,7 +5205,7 @@ connection = mysql+pymysql://nova:{{ nova_db_pass }}@{{ ctrl_ip_womask }}/nova
 # "scheme://hostname:port[/path]"
 #   (i.e. "http://10.0.1.0:9292" or "https://my.glance.server/image").
 #  (list value)
-api_servers = http://{{ ctrl_ip_womask }}:{{ glance_internal_url_port }}
+api_servers = http://{{ ctrl_endpoint }}:{{ glance_internal_url_port }}
 
 #
 # Enable glance operation retries.
@@ -6012,9 +6012,9 @@ api_servers = http://{{ ctrl_ip_womask }}:{{ glance_internal_url_port }}
 # Its value may be silently ignored in the future.
 # Reason: The auth_uri option is deprecated in favor of www_authenticate_uri and
 # will be removed in the S  release.
-auth_uri = http://{{ ctrl_ip_womask }}:{{ keystone_public_url_port }}
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}
-memcached_servers = {{ ctrl_ip_womask }}:11211
+auth_uri = http://{{ ctrl_endpoint }}:{{ keystone_public_url_port }}
+auth_url = http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}
+memcached_servers = {{ ctrl_endpoint }}:11211
 auth_type = password
 project_domain_name = default
 user_domain_name = default
@@ -7458,7 +7458,7 @@ password = {{ nova_pass }}
 # Adapter configuration options. In the current release, "url" will override
 # this behavior, but will be ignored and/or removed in a future release. To
 # achieve the same result, use the endpoint_override option instead.
-url = http://{{ ctrl_ip_womask }}:{{ neutron_internal_url_port }}
+url = http://{{ ctrl_endpoint }}:{{ neutron_internal_url_port }}
 
 #
 # Default name for the Open vSwitch integration bridge.
@@ -7534,7 +7534,7 @@ auth_type = password
 #auth_section = <None>
 
 # Authentication URL (string value)
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}
+auth_url = http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}
 
 # Scope for system operations (string value)
 #system_scope = <None>
@@ -8040,7 +8040,7 @@ lock_path = /var/lib/nova/tmp
 # A URL representing the messaging driver to use for notifications. If not set,
 # we fall back to the same configuration used for RPC. (string value)
 # Deprecated group/name - [DEFAULT]/notification_transport_url
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
+transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_endpoint }}
 
 # AMQP topic used for OpenStack notifications. (list value)
 # Deprecated group/name - [rpc_notifier2]/topics
@@ -8650,7 +8650,7 @@ project_domain_name = Default
 project_name = service
 auth_type = password
 user_domain_name = Default
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}/v3
+auth_url = http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}/v3
 username = placement
 password = {{ placement_pass }}
 

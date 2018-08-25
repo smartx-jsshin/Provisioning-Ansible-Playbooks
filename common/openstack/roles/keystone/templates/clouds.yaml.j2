@@ -1,7 +1,7 @@
 clouds:
   {{ playground_name }}:
     auth:
-      auth_url: http://{{ ctrl_ip_womask }}:{{ keystone_admin_url_port }}/v3
+      auth_url: http://{{ ctrl_endpoint }}:{{ keystone_admin_url_port }}/v3
       project_name: admin
       username: admin
       password: {{ admin_pass }}

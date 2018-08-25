@@ -1941,7 +1941,7 @@ backend = sqlalchemy
 # Deprecated group/name - [DEFAULT]/sql_connection
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
-connection = mysql+pymysql://glance:{{ glance_db_pass }}@{{ ctrl_ip_womask }}/glance
+connection = mysql+pymysql://glance:{{ glance_db_pass }}@{{ ctrl_endpoint }}/glance
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
@@ -3501,9 +3501,9 @@ disk_formats = ami,ari,aki,vhd,vhdx,vmdk,raw,qcow2,vdi,iso,ploop.root-tar
 # Reason: The auth_uri option is deprecated in favor of www_authenticate_uri and
 # will be removed in the S  release.
 
-auth_uri = http://{{ ctrl_ip_womask }}:{{ keystone_public_url_port }}
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}
-memcached_servers = {{ ctrl_ip_womask}}:11211
+auth_uri = http://{{ ctrl_endpoint }}:{{ keystone_public_url_port }}
+auth_url = http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}
+memcached_servers = {{ ctrl_endpoint }}:11211
 auth_type = password
 project_domain_name = default
 user_domain_name = default

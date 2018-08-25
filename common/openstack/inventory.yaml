@@ -3,26 +3,36 @@ all:
     openstack_control:
       hosts:
         openstack_control1:
-          ansible_host: 203.237.53.10
-          ansible_user: ansible-ldap
+          ansible_host: 192.168.100.101
+          ansible_user: vagrant
           ansible_become: yes
-          mgmt_ip: 203.237.53.10/24
-          ctrl_ip: 10.255.250.10/24
-          data_ip: 10.255.251.10/24
+          mgmt_ip: 192.168.100.101/24
+          mgmt_endpoint: mgmt.control1.example.com
+          ctrl_ip: 192.168.101.101/24
+          ctrl_endpoint: ctrl.control1.example.com
+          data_ip: 192.168.102.101/24
+          data_endpoint: data.control1.example.com
 
     openstack_compute:
       hosts:
         openstack_compute1:
-          ansible_host: 203.237.53.6
-          ansible_user: ansible-ldap
+          ansible_host: 192.168.100.102
+          ansible_user: vagrant
           ansible_become: yes
-          mgmt_ip: 203.237.53.6/24
-          ctrl_ip: 10.255.250.6/24
-          data_ip: 10.255.251.6/24
+          mgmt_ip: 192.168.100.102/24
+          mgmt_endpoint: mgmt.compute1.example.com
+          ctrl_ip: 192.168.101.102/24
+          ctrl_endpoint: ctrl.compute1.example.com
+          data_ip: 192.168.102.102/24
+          data_endpoint: data.compute1.example.com
+
         openstack_compute2:
-          ansible_host: 203.237.53.7
-          ansible_user: ansible-ldap
+          ansible_host: 192.168.100.103
+          ansible_user: vagrant
           ansible_become: yes
-          mgmt_ip: 203.237.53.7/24
-          ctrl_ip: 10.255.250.7/24
-          data_ip: 10.255.251.7/24
+          mgmt_ip: 192.168.100.103/24
+          mgmt_endpoint: mgmt.compute2.example.com
+          ctrl_ip: 192.168.101.103/24
+          ctrl_endpoint: ctrl.compute2.example.com
+          data_ip: 192.168.102.103/24
+          data_endpoint: data.compute2.example.com

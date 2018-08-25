@@ -38,9 +38,9 @@
 - name: Bootstrap Keystone
   command: |
     keystone-manage bootstrap --bootstrap-password {{ admin_pass }} \
-    --bootstrap-admin-url http://{{ ctrl_ip_womask }}:{{ keystone_admin_url_port }}/v3/ \
-    --bootstrap-internal-url http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}/v3/ \
-    --bootstrap-public-url http://{{ mgmt_ip_womask }}:{{ keystone_public_url_port }}/v3/ \
+    --bootstrap-admin-url http://{{ ctrl_endpoint }}:{{ keystone_admin_url_port }}/v3/ \
+    --bootstrap-internal-url http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}/v3/ \
+    --bootstrap-public-url http://{{ mgmt_endpoint }}:{{ keystone_public_url_port }}/v3/ \
     --bootstrap-region-id {{ openstack_region }}
 
 - name: Template apache2.conf

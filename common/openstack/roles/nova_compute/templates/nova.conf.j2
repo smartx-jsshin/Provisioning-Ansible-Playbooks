@@ -3156,7 +3156,7 @@ firewall_driver = nova.virt.firewall.NoopFirewallDriver
 # oslo_messaging.TransportURL at
 # https://docs.openstack.org/oslo.messaging/latest/reference/transport.html
 # (string value)
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ controller.ctrl_ip_womask }}
+transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ controller.ctrl_endpoint }}
 
 # DEPRECATED: The messaging driver to use, defaults to rabbit. Other drivers
 # include amqp and zmq. (string value)
@@ -5205,7 +5205,7 @@ connection = sqlite:////var/lib/nova/nova.sqlite
 # "scheme://hostname:port[/path]"
 #   (i.e. "http://10.0.1.0:9292" or "https://my.glance.server/image").
 #  (list value)
-api_servers = http://{{ controller.ctrl_ip_womask  }}:{{ glance_internal_url_port }}
+api_servers = http://{{ controller.ctrl_endpoint }}:{{ glance_internal_url_port }}
 
 #
 # Enable glance operation retries.
@@ -6062,7 +6062,7 @@ api_servers = http://{{ controller.ctrl_ip_womask  }}:{{ glance_internal_url_por
 # Optionally specify a list of memcached server(s) to use for caching. If left
 # undefined, tokens will instead be cached in-process. (list value)
 # Deprecated group/name - [keystone_authtoken]/memcache_servers
-memcached_servers = {{ controller.ctrl_ip_womask }}:11211
+memcached_servers = {{ controller.ctrl_endpoint }}:11211
 
 # In order to prevent excessive effort spent validating tokens, the middleware
 # caches previously-seen tokens for a configurable duration (in seconds). Set to
@@ -6212,7 +6212,7 @@ auth_type = password
 
 # Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
-auth_url = http://{{ controller.ctrl_ip_womask }}:{{ keystone_internal_url_port }}
+auth_url = http://{{ controller.ctrl_endpoint }}:{{ keystone_internal_url_port }}
 project_domain_name = default
 user_domain_name = default
 project_name = service
@@ -7456,7 +7456,7 @@ password = {{ nova_pass }}
 # Adapter configuration options. In the current release, "url" will override
 # this behavior, but will be ignored and/or removed in a future release. To
 # achieve the same result, use the endpoint_override option instead.
-url = http://{{ controller.ctrl_ip_womask }}:{{ neutron_internal_url_port }}
+url = http://{{ controller.ctrl_endpoint }}:{{ neutron_internal_url_port }}
 
 #
 # Default name for the Open vSwitch integration bridge.
@@ -7506,7 +7506,7 @@ service_metadata_proxy = true
 #
 # * service_metadata_proxy
 #  (string value)
-metadata_proxy_shared_secret = METADATA_SECRET
+metadata_proxy_shared_secret = {{ neutron_metadata_secret }}
 
 # PEM encoded Certificate Authority to use when verifying HTTPs connections.
 # (string value)
@@ -7532,7 +7532,7 @@ auth_type = password
 #auth_section = <None>
 
 # Authentication URL (string value)
-auth_url = http://{{ controller.ctrl_ip_womask }}:{{ keystone_internal_url_port }}
+auth_url = http://{{ controller.ctrl_endpoint }}:{{ keystone_internal_url_port }}
 
 # Scope for system operations (string value)
 #system_scope = <None>
@@ -8706,7 +8706,7 @@ auth_type = password
 #auth_section = <None>
 
 # Authentication URL (string value)
-auth_url = http://{{ controller.ctrl_ip_womask }}:{{ keystone_internal_url_port }}/v3
+auth_url = http://{{ controller.ctrl_endpoint }}:{{ keystone_internal_url_port }}/v3
 
 # Scope for system operations (string value)
 #system_scope = <None>
@@ -10188,7 +10188,7 @@ server_proxyclient_address = $my_ip
 # * novncproxy_host
 # * novncproxy_port
 #  (uri value)
-novncproxy_base_url = http://{{ controller.mgmt_ip_womask }}:6080/vnc_auto.html
+novncproxy_base_url = {{ novncproxy_base_url }}
 
 #
 # IP address or hostname that the XVP VNC console proxy should bind to.

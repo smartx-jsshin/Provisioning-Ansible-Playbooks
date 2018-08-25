@@ -643,7 +643,7 @@ log_dir = /var/log/keystone
 
 [database]
 #connection = sqlite:////var/lib/keystone/keystone.db
-connection = mysql+pymysql://keystone:{{ keystone_db_pass }}@{{ ctrl_ip_womask }}/keystone
+connection = mysql+pymysql://keystone:{{ keystone_db_pass }}@{{ ctrl_endpoint }}/keystone
 
 #
 # From oslo.db

@@ -1,6 +1,6 @@
 ---
 # tasks file for basic_env
-- include_tasks: install_ovs.yml
+#- include_tasks: install_ovs.yml
 - include_tasks: install_ntp.yml
 - include_tasks: add_openstack_repo.yml
 - include_tasks: install_db.yml

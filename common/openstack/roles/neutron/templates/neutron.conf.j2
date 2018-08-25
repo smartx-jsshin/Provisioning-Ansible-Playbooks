@@ -567,7 +567,7 @@ router_distributed = True
 # oslo_messaging.TransportURL at
 # https://docs.openstack.org/oslo.messaging/latest/reference/transport.html
 # (string value)
-transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_ip_womask }}
+transport_url = rabbit://openstack:{{ rabbit_pass }}@{{ ctrl_endpoint }}
 
 # DEPRECATED: The messaging driver to use, defaults to rabbit. Other drivers
 # include amqp and zmq. (string value)
@@ -702,7 +702,7 @@ root_helper = "sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf"
 
 
 [database]
-connection = mysql+pymysql://neutron:{{ neutron_db_pass}}@{{ ctrl_ip_womask }}/neutron
+connection = mysql+pymysql://neutron:{{ neutron_db_pass}}@{{ ctrl_endpoint }}/neutron
 
 #
 # From neutron.db
@@ -842,7 +842,7 @@ connection = mysql+pymysql://neutron:{{ neutron_db_pass}}@{{ ctrl_ip_womask }}/n
 # Its value may be silently ignored in the future.
 # Reason: The auth_uri option is deprecated in favor of www_authenticate_uri
 # and will be removed in the S  release.
-auth_uri = http://{{ ctrl_ip_womask }}:{{ keystone_public_url_port }}
+auth_uri = http://{{ ctrl_endpoint }}:{{ keystone_public_url_port }}
 
 # API version of the admin Identity API endpoint. (string value)
 #auth_version = <None>
@@ -892,7 +892,7 @@ auth_uri = http://{{ ctrl_ip_womask }}:{{ keystone_public_url_port }}
 # Optionally specify a list of memcached server(s) to use for caching. If left
 # undefined, tokens will instead be cached in-process. (list value)
 # Deprecated group/name - [keystone_authtoken]/memcache_servers
-memcached_servers = {{ ctrl_ip_womask }}:11211
+memcached_servers = {{ ctrl_endpoint }}:11211
 
 # In order to prevent excessive effort spent validating tokens, the middleware
 # caches previously-seen tokens for a configurable duration (in seconds). Set
@@ -1042,7 +1042,7 @@ auth_type = password
 
 # Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}
+auth_url = http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}
 project_domain_name = default
 user_domain_name = default
 project_name = service
@@ -1120,7 +1120,7 @@ region_name = {{ openstack_region }}
 #
 
 # Authentication URL (string value)
-auth_url = http://{{ ctrl_ip_womask }}:{{ keystone_internal_url_port }}
+auth_url = http://{{ ctrl_endpoint }}:{{ keystone_internal_url_port }}
 
 # Authentication type to load (string value)
 # Deprecated group/name - [nova]/auth_plugin

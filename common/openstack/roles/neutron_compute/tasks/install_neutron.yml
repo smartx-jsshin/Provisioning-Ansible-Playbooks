@@ -56,7 +56,7 @@
     hosts_list: |
         {% set res = [] -%}
         {% for host in hostvars.keys() -%}
-          {% set ignored = res.extend([{ 'name': host, 'group': hostvars[host]['group_names'][0], 'mgmt_ip': hostvars[host].mgmt_ip, 'ctrl_ip': hostvars[host].ctrl_ip, 'data_ip': hostvars[host].data_ip, 'mgmt_ip_womask': (hostvars[host].mgmt_ip | ipaddr('address')), 'ctrl_ip_womask': (hostvars[host].ctrl_ip | ipaddr('address')), 'data_ip_womask': (hostvars[host].data_ip | ipaddr('address')) }]) -%}
+          {% set ignored = res.extend([{ 'name': host, 'group': hostvars[host]['group_names'][0], 'mgmt_ip': hostvars[host].mgmt_ip, 'ctrl_ip': hostvars[host].ctrl_ip, 'data_ip': hostvars[host].data_ip, 'mgmt_ip_womask': (hostvars[host].mgmt_ip | ipaddr('address')), 'ctrl_ip_womask': (hostvars[host].ctrl_ip | ipaddr('address')), 'data_ip_womask': (hostvars[host].data_ip | ipaddr('address')), 'mgmt_endpoint': hostvars[host].mgmt_endpoint, 'ctrl_endpoint': hostvars[host].ctrl_endpoint, 'data_endpoint': hostvars[host].data_endpoint, 'ansible_user': hostvars[host].ansible_user }]) -%}
         {%- endfor %}
         {{ res }}
 

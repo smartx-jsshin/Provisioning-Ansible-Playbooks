@@ -35,13 +35,13 @@
     var: glance_endpoints
 
 - name: Create Glance Service Public API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} image public http://{{ mgmt_ip_womask }}:{{ glance_public_url_port }}"
-  when: "glance_endpoints | selectattr('Service Type', 'match', '^'+'image'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'glance'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_ip_womask | regex_escape())+':'+(glance_public_url_port | string)+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} image public http://{{ mgmt_endpoint }}:{{ glance_public_url_port }}"
+  when: "glance_endpoints | selectattr('Service Type', 'match', '^'+'image'+'$') | selectattr('Interface', 'match', '^'+'public'+'$') | selectattr('Service Name', 'match', '^'+'glance'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(mgmt_endpoint | regex_escape())+':'+(glance_public_url_port | string)+'$') | list | length == 0"
 
 - name: Create Glance Service Internal API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} image internal http://{{ ctrl_ip_womask }}:{{ glance_internal_url_port }}"
-  when: "glance_endpoints | selectattr('Service Type', 'match', '^'+'image'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'glance'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(glance_internal_url_port | string)+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} image internal http://{{ ctrl_endpoint }}:{{ glance_internal_url_port }}"
+  when: "glance_endpoints | selectattr('Service Type', 'match', '^'+'image'+'$') | selectattr('Interface', 'match', '^'+'internal'+'$') | selectattr('Service Name', 'match', '^'+'glance'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_endpoint | regex_escape())+':'+(glance_internal_url_port | string)+'$') | list | length == 0"
 
 - name: Create Glance Service Admin API Endpoint
-  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} image admin http://{{ ctrl_ip_womask }}:{{ glance_admin_url_port }}"
-  when: "glance_endpoints | selectattr('Service Type', 'match', '^'+'image'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'glance'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_ip_womask | regex_escape())+':'+(glance_admin_url_port | string)+'$') | list | length == 0"
+  shell: ". /root/admin-openrc.sh && openstack endpoint create -f json --region {{ openstack_region }} image admin http://{{ ctrl_endpoint }}:{{ glance_admin_url_port }}"
+  when: "glance_endpoints | selectattr('Service Type', 'match', '^'+'image'+'$') | selectattr('Interface', 'match', '^'+'admin'+'$') | selectattr('Service Name', 'match', '^'+'glance'+'$') | selectattr('URL', 'match', '^http:\\/\\/'+(ctrl_endpoint | regex_escape())+':'+(glance_admin_url_port | string)+'$') | list | length == 0"
