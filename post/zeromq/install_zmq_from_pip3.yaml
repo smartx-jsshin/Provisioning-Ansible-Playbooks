@@ -1,0 +1,13 @@
+---
+- hosts: all
+  remote_user: ubuntu
+  become: yes
+  vars:
+    - name: Install Python3-pip package
+      apt:
+        name: python3-pip
+        update_cache: yes
+        state: present
+    - name: Install ZeroMQ with pip3 command
+      pip:
+        name: pyzmq
