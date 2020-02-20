@@ -1,0 +1,11 @@
+---
+  - hosts: p-center
+    vars:
+
+    tasks: 
+      - name: Testing Query to KeyDB
+        shell: 
+          cmd: docker exec -ti -e REDISCLI_AUTH=password tower-keydb keydb-cli get box
+        register: box_res
+
+      - debug: msg= "{{ box_res.result }}"
