@@ -1,0 +1,13 @@
+---
+  db_data_rootdir: /mnt
+  db_config_rootdir: /opt/docker_config
+
+  mongodb_published_port: 27017
+  mongodb_container_name: prov-mongodb
+  mongodb_admin_id: mongoadmin
+  mongodb_admin_pw: mongoadmin
+
+  keydb_port: 6379
+  keydb_container_name: tower-keydb
+  keydb_pw: keydbadmin
+  keydb_peer_ip: 127.0.0.1 # v-center control plane

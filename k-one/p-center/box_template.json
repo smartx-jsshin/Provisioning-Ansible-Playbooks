@@ -1,0 +1,33 @@
+{
+    "name": "K1-GJ-Cube1",
+    "where": "GIST",
+    "os":{
+        "distro": "",
+        "distro-version": "",
+        "kernel-version": ""
+    },
+    "access": {
+        "id": "ubuntu"
+    },
+    "network-plane": {
+        "management": {
+            "name": "eth0",
+            "ipaddr": "managment ip",
+            "subnet": "subnet mask",
+            "dns": [
+                "8.8.8.8"
+            ]
+        },
+        "control": {
+            "name": "eth1",
+            "ipaddr": "control ip",
+            "subnet": "subnet mask"
+        },
+        "data": {
+            "name": "eth1",
+            "ipaddr": "control ip",
+            "subnet": "subnet mask"
+        },
+        "other": []
+    }
+}

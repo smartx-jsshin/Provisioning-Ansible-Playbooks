@@ -14,5 +14,5 @@
 
   keydb_port: 6379
   keydb_container_name: tower-keydb
-  keydb_pw: influxadmin
-  keydb_peer_ip: 127.0.0.1
+  keydb_pw: keydbadmin
+  keydb_peer_ip: 127.0.0.1 #p-center control plane

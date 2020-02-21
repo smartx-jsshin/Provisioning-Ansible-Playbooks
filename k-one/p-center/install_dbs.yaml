@@ -1,0 +1,78 @@
+---
+  - hosts: p-center
+    vars_files:
+      - db_vars.yaml
+
+    vars:
+      mongodb_data_dir: "{{ db_data_rootdir }}"/"{{ mongodb_container_name }}"
+      keydb_data_dir: "{{ db_data_rootdir }}"/ "{{ keydb_container_name }}"
+      keydb_config_dir: "{{ db_config_rootdir}}"/"{{ keydb_container_name }}"
+
+    tasks:
+      ## MongoDB Installation
+      - name: Create MongoDB Data Directory
+        file:
+          path: "{{ mongodb_data_dir }}"
+          owner: "{{ ansible_user }}"
+          group: "{{ ansible_user }}"
+          mode: '0644'
+          state: directory
+
+      - name: Pull MongoDB Docker Image
+        docker_image:
+          name: mongo:4.2.3-bionic
+          source: pull
+          
+      - name: Create MongoDB Docker Instance
+        docker_container:
+          name: "{{ mongodb_container_name }}"
+          image: mongo:4.2.3-bionic
+          restart_policy: unless-stopped
+          published_ports:
+            - "{{ mongodb_published_port }}":27017
+          env:
+            MONGO_INITDB_ROOT_USERNAME: "{{ mongodb_admin_id }}"
+            MONGO_INITDB_ROOT_PASSWORD: "{{ mongodb_admin_pw }}"
+          volume:
+            - "{{ mongodb_data_dir }}":/data/db
+
+      ## KeyDB Installation
+      - name: Create KeyDB Data Directory
+        file:
+          path: "{{ db_data_root_dir }}"/"{{ keydb_container_name }}"
+          owner: "{{ ansible_user }}"
+          group: "{{ ansible_user }}"
+          mode: '0644'
+          state: directory
+
+      - name: Create KeyDB Config Directory
+        file:
+          path: "{{ db_config_rootdir }}"/"{{ keydb_container_name }}"
+          owner: "{{ ansible_user }}"
+          group: "{{ ansible_user }}"
+          mode: '0644'
+          state: directory
+      
+      - name: Templating KeyDB Config File
+        template:
+          src: templates/keydb.conf.j2
+          dest: "{{ keydb_config_dir }}"/keydb.conf
+          owner: "{{ ansible_user }}"
+          group: "{{ ansible_user }}"
+          mode: '0644'
+
+      - name: Pull KeyDB Docker Image
+        docker_image:
+          name: eqalpha/keydb
+          source: pull
+      
+      - name: Create KeyDB Docker Instance
+        docker_container:
+          name: "{{ keydb_container_name }}"
+          image: eqalpha/keydb
+          restart_policy: unless-stopped
+          published_ports:
+            - "{{ control_plane_ip }}":"{{ keydb_published_port }}":6379
+          volume:
+            - "{{ keydb_data_dir }}":/data
+            - "{{ keydb_config_dir }}"/keydb.conf:/etc/keydb/keydb.conf
